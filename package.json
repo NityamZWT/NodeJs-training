@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-training",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NityamZWT/NodeJs-training.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NityamZWT/NodeJs-training/issues"
+  },
+  "homepage": "https://github.com/NityamZWT/NodeJs-training#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
