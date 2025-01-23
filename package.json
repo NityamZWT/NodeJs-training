@@ -17,6 +17,7 @@
   "homepage": "https://github.com/NityamZWT/NodeJs-training#readme",
   "description": "",
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "nodemon":"3.1.9"
   }
 }
