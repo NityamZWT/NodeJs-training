@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "day3": "node ./Exercises/day03/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "nodemon":"3.1.9"
+    "express": "^4.21.2",
+    "nodemon": "3.1.9"
   }
 }
