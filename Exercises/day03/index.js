@@ -1,8 +1,7 @@
 const express = require('express');
 require('dotenv').config()
-const fs = require('node:fs');
-const { default: users } = require('./const');
-const { json } = require('node:stream/consumers');
+const middleware = require('./middleware');
+const users = require('./const');
 
 const app = express();
 const hostname = process.env.HOSTNAME;
@@ -10,6 +9,8 @@ const port = process.env.PORT
 // console.log(hostname, port);
 
 app.use(express.json());
+app.use(middleware);
+
 
 //task -01- Set up an endpoint GET / to return Welcome to the User Management API!
 app.get('/', (req, res) => {
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 app.get('/users', (req, res) => {
     try {
         console.log(users);
-        const response = users.map(user => user.name);
+        const response = users.map(user => user);
 
         console.log('res--', response);
 
@@ -61,13 +62,14 @@ app.get('/users/:id', (req, res) => {
 app.post('/users', (req, res) => {
     try {
         console.log('in');
-
+        const id = req.body.id
         const name = req.body.name
         const email = req.body.email
         const age = req.body.age
         const role = req.body.role
         const isActive = req.body.isActive
         const newUser = {
+            id,
             name,
             email,
             age,
@@ -94,39 +96,65 @@ app.post('/users', (req, res) => {
 
 app.patch("/users/:id", (req, res) => {
     try {
-        const name = req.body.name
-        const email = req.body.email
-        const age = req.body.age
-        const role = req.body.role
-        const isActive = req.body.isActive
-        console.log(req.body);
+        const { name, email, age, role, isActive } = req.body;
+        const param = req.params.id;
 
+        console.log('Request Body:', req.body);
+        console.log('User ID to Update:', param);
 
-        console.log('in');
-        const param = req.params.id
-        console.log(param);
+        let userFound = false;
 
-        const updatedUser = users.map(user => {
+        const updatedUsers = users.map(user => {
             if (user.id == param) {
-                user.name = name
-                user.email = email
-                user.age = age
-                user.role = role
-                user.isActive = isActive
-                return user
+                userFound = true;
+                console.log("userfound", userFound);
+                return {
+                    ...user,
+                    name: name || user.name,
+                    email: email || user.email,
+                    age: age || user.age,
+                    role: role || user.role,
+                    isActive: isActive !== undefined ? isActive : user.isActive
+                };
+
             }
             console.log('user', user);
-        })
-        res.send(updatedUser)
-        // console.log('updated--', updatedUser);
+            return user;
 
+        });
+        [...users, ...updatedUsers];
+        console.log("updateduser", users);
 
+        if (!userFound) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Send updated users array as a response
+        res.status(200).send(updatedUsers);
     } catch (error) {
-        console.log(error);
-        console.log('server error!!');
+        console.error('Error:', error);
+        res.status(500).send({ error: "Server error!" });
+    }
+});
+
+app.delete('/users/:id', (req, res) => {
+    try {
+        const param = req.params.id
+        console.log('param id',param);
+
+        const updatedUsers = users.filter(user => {
+            console.log('user id:-',user.id);
+            return user.id != parseInt(param);
+        });
+        console.log(updatedUsers);
+
+        res.status(200).json({ updatedUsers });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send({ error: "Server error!" });
+
     }
 })
-
 
 
 app.listen(port, hostname, (err) => {

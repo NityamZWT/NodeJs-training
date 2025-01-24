@@ -3,4 +3,4 @@ let users = [
     { id: 2, name: "Jane Smith", email: "jane@example.com", age: 25, role: "User", isActive: true }
   ];
 
-  export default users;
+ module.exports = users

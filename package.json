@@ -2,6 +2,7 @@
   "name": "nodejs-training",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "day3": "node ./Exercises/day03/index.js"
