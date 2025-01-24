@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config()
 const middleware = require('./middleware');
+const IdValidator =require('./route_middleware')
 const users = require('./const');
 
 const app = express();
@@ -42,7 +43,7 @@ app.get('/users', (req, res) => {
 
 //task -03- /users/:id
 
-app.get('/users/:id', (req, res) => {
+app.get('/users/:id', IdValidator, (req, res) => {
 
     try {
         // console.log('enter');
@@ -94,7 +95,7 @@ app.post('/users', (req, res) => {
 
 })
 
-app.patch("/users/:id", (req, res) => {
+app.patch("/users/:id", IdValidator, (req, res) => {
     try {
         const { name, email, age, role, isActive } = req.body;
         const param = req.params.id;
@@ -137,7 +138,7 @@ app.patch("/users/:id", (req, res) => {
     }
 });
 
-app.delete('/users/:id', (req, res) => {
+app.delete('/users/:id', IdValidator, (req, res) => {
     try {
         const param = req.params.id
         console.log('param id',param);
