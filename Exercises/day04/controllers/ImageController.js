@@ -1,14 +1,16 @@
 const userModel = require('../services/userModel');
 
-const uploadImage = (req, res) => {
+const response ={}
+
+const uploadImage = async(req, res) => {
     try{
         console.log("enter in controller");
         console.log('req.body', req.body);
         
         const files = req.file;
         console.log('files',files);
-        const file = userModel.uploadImageModel(req.params.id, files);
-        console.log('file',file.path);
+        const file = await userModel.uploadImageModel(req.params.id, files);
+        
         if(!req.params.id){
             return res.status(404).json({massage:"user not found with" + req.params.id})
         }

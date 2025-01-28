@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const idValidatorMiddleware = require('../middlewares/idValidatorMiddleware');
 const {uploadImage} = require('../controllers/imageController')
 
-const upload = require('../middlewares/fileUploadMiddleware')
+const {fileUploadFilter} = require('../middlewares/fileUploadMiddleware')
 
 
 
@@ -18,7 +18,7 @@ router.patch('/users/:id', idValidatorMiddleware, userController.updateUser);
 
 router.delete('/users/:id', idValidatorMiddleware, userController.deleteUser);
 
-router.post('/upload-image/:id', upload.single('userfiles'), uploadImage)
+router.post('/upload-image/:id', fileUploadFilter, uploadImage)
 
 
 module.exports = router;

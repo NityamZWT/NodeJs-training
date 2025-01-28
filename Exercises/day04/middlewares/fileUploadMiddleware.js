@@ -38,6 +38,29 @@ const upload = multer({
   storage: storage, limits: { fileSize: 2 * 1000 * 1000 }, fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
-})
+}).single('userfiles');
 
-module.exports = upload;
+export const fileUploadFilter = (req, res, next) => {
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_UNEXPECTED_FILE") {
+        return res.status(404).json({
+          message: "Only one file is allowed. Please upload a single file.",
+        });
+      }
+      return res.status(404).json({ message: err.message });
+    }
+    if (err) {
+      return res.status(404).json({ message: err.message });
+    }
+    const fileSizeInBytes = req.file.size;
+    const maxFileSizeInBytes = 2 * 1024 * 1024;
+    if (fileSizeInBytes > maxFileSizeInBytes) {
+      return res.status(404).json({
+        message: "File size exceeds 2 MB. Please upload a smaller file.",
+      });
+    }
+    next();
+  })
+};
+

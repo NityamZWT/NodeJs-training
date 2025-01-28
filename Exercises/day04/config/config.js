@@ -27,7 +27,7 @@ const initializeDatabase = async () => {
       );`;
 
      const user_images = `
-      CREATE TABLE IF NOT EXISTS users(
+      CREATE TABLE IF NOT EXISTS user_images(
         id INT AUTO_INCREMENT,
         userId INT NOT NULL,
         imageName VARCHAR(255) NOT NULL,

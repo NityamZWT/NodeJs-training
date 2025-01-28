@@ -1,7 +1,7 @@
 const users = require('../const');
 const uploadImage = require('../controllers/userController');
 const db = require('../config/config')
-
+const Path = require('node:path');
 
 const getUsers = async () => {
     try {
@@ -45,29 +45,35 @@ const addUser = async (newUser) => {
 }
 
 const updateUser = async (id, updatedData) => {
-        console.log('updatedData:---', updatedData);
+    console.log('updatedData:---', updatedData);
 
-        // const { name, email, age, role } = updatedData;
-        const userId = parseInt(id);
+    // const { name, email, age, role } = updatedData;
+    const userId = parseInt(id);
 
-        if (Object.keys(updatedData).length === 0) {
-            console.log('enter in condition:', Object.keys(updatedData).length);
+    if (Object.keys(updatedData).length === 0) {
+        console.log('enter in condition:', Object.keys(updatedData).length);
 
-            throw new Error('please add data field you want to update!');
+        throw new Error('please add data field you want to update!');
+    }
+
+    let query = `UPDATE users SET `
+    const params = [];
+    const keys = Object.keys(updatedData);
+    keys.forEach((key, index) => {
+        query += `${key} = ?`;
+        params.push(updatedData[key]);
+
+        if (index < keys.length - 1) {
+            query += ', ';
         }
-
-        let query = `UPDATE users SET `
-
-        for (const [key, value] of Object.entries(updatedData)) {
-            console.log(`${key}: ${value}`);
-            query = query + `${key} = "${value}",`;
-        }
-        console.log(query);
-        query = query.slice(0, -1);
-        query = query + `where users.id = ${userId} `
-        console.log(query);
-        const result = await db.query(query);
-        return result[0];
+    });
+    console.log(query);
+    // query = query.slice(0, -1);
+    query = query + `where users.id = ?`
+    params.push(userId);
+    console.log(query);
+    const result = await db.query(query);
+    return result[0];
 
 }
 
@@ -83,19 +89,22 @@ const deleteUser = async (id) => {
     }
 }
 
-const uploadImageModel = (id, files) => {
-    console.log("enter in the model");
-
-    const userIndex = users.findIndex(user => user.id === parseInt(id));
-    console.log('index', userIndex);
-
-    if (userIndex !== -1) {
-        console.log('files', files);
-
-        users[userIndex] = { ...users[userIndex], file: { name: files.originalname, path: files.path } }
-        return users[userIndex];
+const uploadImageModel = async (id, files) => {
+    try {
+        console.log("enter in the model");
+        const userId = parseInt(id);
+        const extention = Path.extname(files.filename)
+        const { filename, path, mimetype, size } = files;
+        const query = `INSERT INTO user_images ( userId, imageName, path, mimeType, extension, size)
+            VALUES (?, ?, ?, ?, ?, ?)`;
+        const values = [userId, filename, path, mimetype, extention, size]
+        const result = await db.query(query, values)
+        console.log('index', userId);
+        return result[0];
+    } catch (error) {
+        throw new Error('something wrong in handling file')
     }
-    throw new Error('something wrong in handling file')
+
 }
 
 module.exports = { getUsers, getUserById, addUser, updateUser, deleteUser, uploadImageModel };
