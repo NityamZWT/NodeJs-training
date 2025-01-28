@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-// Create a MySQL connection with promises
+
 const con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -8,13 +8,13 @@ const con = mysql.createConnection({
   database: "day04db"
 }).promise();
 
-// Define an async function to connect and create the table
+
 const initializeDatabase = async () => {
   try {
-    await con.connect(); // Connect to the database
+    await con.connect(); 
     console.log("Connected!");
 
-    const sql = `
+    const users = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -24,11 +24,26 @@ const initializeDatabase = async () => {
         isActive BOOLEAN DEFAULT TRUE,
         createdAt TIMESTAMP NOT NULL DEFAULT NOW(),
         updatedAt TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
-      );
-    `;
+      );`;
+
+     const user_images = `
+      CREATE TABLE IF NOT EXISTS users(
+        id INT AUTO_INCREMENT,
+        userId INT NOT NULL,
+        imageName VARCHAR(255) NOT NULL,
+        path VARCHAR(255) NOT NULL,
+        mimeType VARCHAR(255),
+        extension VARCHAR(255),
+        size INT,
+        createdAt TIMESTAMP NOT NULL DEFAULT NOW(),
+        PRIMARY KEY(id),
+        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
+      )
+     `; 
 
     // Execute the query to create the table
-    await con.query(sql);
+    await con.query(users);
+    await con.query(user_images);
     console.log("Table created!");
   } catch (err) {
     console.error("Error initializing the database:", err.message);

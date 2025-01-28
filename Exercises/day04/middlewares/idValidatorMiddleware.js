@@ -1,6 +1,5 @@
-const users = require('../const'); 
 const { userIdSchema } = require('../validators/uservalidator');
-const db = require('../config')
+const db = require('../config/config')
 
 async function idValidatorMiddleware(req, res, next) {
     const userId = parseInt(req.params.id);

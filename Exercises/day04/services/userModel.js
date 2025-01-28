@@ -1,6 +1,6 @@
 const users = require('../const');
 const uploadImage = require('../controllers/userController');
-const db = require('../config')
+const db = require('../config/config')
 
 
 const getUsers = async () => {
@@ -40,21 +40,19 @@ const addUser = async (newUser) => {
         return userEntry[0];
 
     } catch (error) {
-        throw error;
+        throw new error;
     }
-
 }
 
 const updateUser = async (id, updatedData) => {
- 
-        console.log('updatedData:---',updatedData);
-        
+        console.log('updatedData:---', updatedData);
+
         // const { name, email, age, role } = updatedData;
         const userId = parseInt(id);
 
-        if(Object.keys(updatedData).length === 0){
-            console.log('enter in condition:',Object.keys(updatedData).length);
-            
+        if (Object.keys(updatedData).length === 0) {
+            console.log('enter in condition:', Object.keys(updatedData).length);
+
             throw new Error('please add data field you want to update!');
         }
 
@@ -62,31 +60,27 @@ const updateUser = async (id, updatedData) => {
 
         for (const [key, value] of Object.entries(updatedData)) {
             console.log(`${key}: ${value}`);
-            query = query + `${key} = "${value}", `; 
-          }
-            console.log(query);
-            query = query.slice(0,-1);
-            query = query + `where users.id = ${userId} `
-            console.log(query);
-            
-    //     // const values = [name, email, age, role, userId]
+            query = query + `${key} = "${value}",`;
+        }
+        console.log(query);
+        query = query.slice(0, -1);
+        query = query + `where users.id = ${userId} `
+        console.log(query);
         const result = await db.query(query);
         return result[0];
-   
+
 }
 
-const deleteUser = async(id) => {
+const deleteUser = async (id) => {
     try {
         const userIndex = parseInt(id);
         const query = `DELETE FROM users WHERE users.id = ?`
         const values = [userIndex];
-        const result = await db.query(query,values);
+        const result = await db.query(query, values);
         return result[0];
     } catch (error) {
         return null;
     }
-    // const userIndex = users.findIndex(user => user.id === parseInt(id));
-  
 }
 
 const uploadImageModel = (id, files) => {

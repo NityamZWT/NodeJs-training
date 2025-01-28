@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const idValidatorMiddleware = require('../middlewares/idValidatorMiddleware');
-const path = require('node:path');
+const {uploadImage} = require('../controllers/imageController')
 
+const upload = require('../middlewares/fileUploadMiddleware')
 
 
 
@@ -16,5 +17,8 @@ router.post('/users', userController.createUser);
 router.patch('/users/:id', idValidatorMiddleware, userController.updateUser);
 
 router.delete('/users/:id', idValidatorMiddleware, userController.deleteUser);
+
+router.post('/upload-image/:id', upload.single('userfiles'), uploadImage)
+
 
 module.exports = router;

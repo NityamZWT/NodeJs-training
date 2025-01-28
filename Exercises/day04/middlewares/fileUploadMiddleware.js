@@ -1,7 +1,4 @@
-const express = require('express');
-const router = express.Router();
 const multer = require('multer')
-const userController = require('../controllers/userController');
 const path = require('node:path')
 
 
@@ -43,6 +40,4 @@ const upload = multer({
   }
 })
 
-router.post('/upload-image/:id', upload.single('userfiles'), userController.uploadImage)
-
-module.exports = router;
+module.exports = upload;
