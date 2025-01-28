@@ -1,4 +1,5 @@
 const users = require('../const'); 
+const  uploadImage  = require('../controllers/userController');
 
 
 const getUsers = () => {
@@ -30,4 +31,19 @@ const deleteUser = (id) => {
     return null;
 }
 
-module.exports = { getUsers, getUserById, addUser, updateUser, deleteUser };
+const uploadImageModel = (id, files) =>{
+    console.log("enter in the model");
+    
+    const userIndex = users.findIndex(user => user.id === parseInt(id));
+    console.log('index',userIndex);
+    
+    if (userIndex !== -1) {
+        console.log('files',files);
+        
+        users[userIndex] = { ...users[userIndex], file: {name:files.originalname,path: files.path  }}
+        return users[userIndex];
+    }
+    throw new Error('something wrong in handling file')
+}
+
+module.exports = { getUsers, getUserById, addUser, updateUser, deleteUser, uploadImageModel };
