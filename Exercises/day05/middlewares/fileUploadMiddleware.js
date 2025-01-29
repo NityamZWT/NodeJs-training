@@ -1,16 +1,22 @@
 const multer = require('multer')
 const path = require('node:path')
-const {userIdSchema} = require('../validators/uservalidator')
+const { userIdSchema } = require('../validators/uservalidator')
 const db = require('../config/config')
+const fs = require('node:fs')
 
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log('__dirname:', process.cwd());
 
-    cb(null, './public')
-    console.log("enter in storage");
+    const uploadPath = "./public";
 
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+      console.log('Directory created:', uploadPath);
+    }
+    cb(null, uploadPath)
+    console.log("enter in storage");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = new Date().getTime()
@@ -42,12 +48,12 @@ const upload = multer({
   }
 }).single('userfiles');
 
- const fileUploadFilter = (req, res, next) => {
-   
-   upload(req, res, function (err) {
-    console.log('file',req.file);
-    if(!req.file){
-      return res.status(400).json({message:'image not found!'})
+const fileUploadFilter = (req, res, next) => {
+
+  upload(req, res, function (err) {
+    console.log('file', req.file);
+    if (!req.file) {
+      return res.status(400).json({ message: 'image not found!' })
     }
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_UNEXPECTED_FILE") {
@@ -72,26 +78,26 @@ const upload = multer({
 };
 
 
-const userId_imageMiddleware = async(req, res,next)=>{
+const userId_imageMiddleware = async (req, res, next) => {
   const Id = parseInt(req.params.userId);
-  const { error } = userIdSchema.validate({ id: Id});
+  const { error } = userIdSchema.validate({ id: Id });
 
   if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+    return res.status(400).json({ message: error.details[0].message });
   }
   const query = `select 1 from user_images where user_images.userId = ?`;
   const values = [Id];
-  const image = await db.query(query,values);
-  console.log("user",image[0]);
-  
-  
+  const image = await db.query(query, values);
+  console.log("user", image[0]);
+
+
   // const user = users.find((user) => user.id === userId);
-  if (image[0].length===0) {
+  if (image[0].length === 0) {
     console.log('in');
-    
-      return res.status(404).json({ message: "User not found!!!" });
+
+    return res.status(404).json({ message: "User not found!!!" });
   }
   next();
 }
 
-module.exports = {fileUploadFilter, userId_imageMiddleware} 
+module.exports = { fileUploadFilter, userId_imageMiddleware } 
