@@ -85,7 +85,7 @@ const deleteUser = async (id) => {
         const result = await db.query(query, values);
         return result[0];
     } catch (error) {
-        return null;
+        throw new Error('something went wrong while deleting user!')
     }
 }
 
@@ -107,7 +107,7 @@ const uploadImageModel = async (id, files) => {
 
 }
 
-const addProfile = async (newProfile) => {
+const addUserProfile = async (newProfile) => {
     const { userId, bio, linkedInUrl, facebookUrl, instaUrl } = newProfile;
     try {
         const query = `
@@ -144,7 +144,6 @@ const getUserProfile = async (id) => {
         const values = [Id];
         const result = await db.query(query, values);
         console.log('result[0]--', result[0]);
-
         return result[0];
     } catch (error) {
         throw new Error('something went wrong while getting profile!')
@@ -183,4 +182,16 @@ const updateUserProfile = async(id, updatedData)=>{
     }
 }
 
-module.exports = { getUsers, getUserById, addUser, updateUser, deleteUser, uploadImageModel, addProfile, getUserProfile, updateUserProfile };
+const deleteUserProfile = async(id)=>{
+    try {
+        const Id = parseInt(id);
+        const query = `DELETE FROM user_profiles WHERE user_profiles.id = ?`;
+        const values = [Id];
+        const result = await db.query(query, values);
+        return result[0];
+    } catch (error) {
+        throw new Error('something went wrong while deleting profile!')
+    }
+}
+
+module.exports = { getUsers, getUserById, addUser, updateUser, deleteUser, uploadImageModel, addUserProfile, getUserProfile, updateUserProfile, deleteUserProfile };

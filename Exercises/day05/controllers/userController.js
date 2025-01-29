@@ -91,7 +91,7 @@ const deleteUser = async (req, res) => {
     try {
         const deletedUser = await userModel.deleteUser(req.params.id);
         if (!deletedUser) {
-            return res.status(404).json({ message: "User not found!" + userId });
+            return res.status(404).json({ message: "User not found!" });
         }
         response.message = "User deleted successfully!"
         res.status(200).json(response);
@@ -100,7 +100,7 @@ const deleteUser = async (req, res) => {
     }
 }
 
-const createProfile = async (req, res) => {
+const createUserProfile = async (req, res) => {
     try {
         const { error } = profileSchema.validate(req.body);
 
@@ -109,7 +109,7 @@ const createProfile = async (req, res) => {
         }
         const {userId, bio, linkedInUrl, facebookUrl, instaUrl} = req.body;
         const newProfile = {userId, bio, linkedInUrl, facebookUrl, instaUrl};
-        const profileAdded = await userModel.addProfile(newProfile);
+        const profileAdded = await userModel.addUserProfile(newProfile);
         console.log(profileAdded);
 
         response.message = 'user profile created successfully';
@@ -130,27 +130,48 @@ const getUserProfile = async(req, res)=>{
         if(!userProfile) {
             return res.status(404).json({ message: "User not found!" });
         }
+
+        // if(userProfile.length===0) {
+        //     throw new Error('user profile not found!');
+        // }
+
         response.message = 'user profile with user info is successfully handled'
         response.data = userProfile
         res.status(200).json(response);
-    } catch (error) {
-        return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
+    } 
+    catch (error) {
+        console.log('status--',error.statusCode);
+        
+        return res.status(500).json({ message: error['message'] || 'server error!' });
         
     }
 }
 
 const updateUserProfile = async(req, res)=>{
     try {
-        // const { error } = profileSchema.validate(req.body);
+        const { error } = profileSchema.validate(req.body);
 
-        // if (error) {
-        //     return res.status(400).json({ message: error.details[0].message });
-        // }
-        const updatedUser = await userModel.updateUserProfile(req.params.id, req.body);
-        if (!updatedUser) {
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+        const updatedUserProfile = await userModel.updateUserProfile(req.params.id, req.body);
+        if (!updatedUserProfile) {
             return res.status(404).json({ message: "User not found!" });
         }
         response.message = 'User Profile Updated successfully!'
+        res.status(200).json(response);
+    } catch (error) {
+        return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
+    }
+}
+
+const deleteUserProfile = async(req, res)=>{
+    try {
+        const deleteUserProfile = await userModel.deleteUserProfile(req.params.id);
+        if (!deleteUserProfile) {
+            return res.status(404).json({ message: "User not found!" });
+        }
+        response.message = "User profile deleted successfully!"
         res.status(200).json(response);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
@@ -163,7 +184,8 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    createProfile,
+    createUserProfile,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    deleteUserProfile
 };

@@ -23,11 +23,13 @@ router.post('/upload-image/:id', fileUploadFilter, uploadImage)
 
 
 //user-profile-day05
-router.post('/user-profile', userProfileMiddleware, userController.createProfile);
+router.post('/user-profile', userProfileMiddleware, userController.createUserProfile);
 
-router.get('/user-profile/:id', idValidatorMiddleware, userController.getUserProfile);
+router.get('/user-profile/:id', userProfileMiddleware, userController.getUserProfile);
 
-router.put('/user-profile/:id', idValidatorMiddleware, userController.updateUserProfile);
+router.put('/user-profile/:id', userProfileMiddleware, userController.updateUserProfile);
+
+router.delete('/user-profile/:id', userProfileMiddleware, userController.deleteUserProfile)
 
 
 module.exports = router;

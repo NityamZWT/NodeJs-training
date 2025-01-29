@@ -21,7 +21,8 @@ const userIdSchema = Joi.object({
 });
 
 const profileId = Joi.object({
-    userId: Joi.number().required(),
+    id: Joi.number().required(),
+    // userId: Joi.number().required(),
 })
 
 const querySchema = Joi.object({
