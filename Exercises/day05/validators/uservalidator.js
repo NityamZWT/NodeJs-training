@@ -21,8 +21,8 @@ const userIdSchema = Joi.object({
 });
 
 const profileId = Joi.object({
-    id: Joi.number().required(),
-    // userId: Joi.number().required(),
+    id: Joi.number().optional(),
+    userId: Joi.number().optional(),
 })
 
 const querySchema = Joi.object({
@@ -31,7 +31,7 @@ const querySchema = Joi.object({
     age: Joi.string().optional(),
 })
 
-const profileSchema = Joi.object({
+const profileCreateSchema = Joi.object({
     userId: Joi.number().required(),
     bio: Joi.string().required().min(3).max(100),
     linkedInUrl: Joi.string().uri().required(),
@@ -39,11 +39,19 @@ const profileSchema = Joi.object({
     instaUrl: Joi.string().uri().required(),
 })
 
+const profileUpdateSchema = Joi.object({
+    bio: Joi.string().min(3).max(100).optional(),
+    linkedInUrl: Joi.string().uri().optional(),
+    facebookUrl: Joi.string().uri().optional(),
+    instaUrl: Joi.string().uri().optional(),
+})
+
 module.exports = {
     createUserSchema,
     updateUserSchema,
     userIdSchema,
     querySchema,
-    profileSchema,
+    profileCreateSchema,
+    profileUpdateSchema,
     profileId
 };

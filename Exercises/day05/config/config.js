@@ -1,11 +1,11 @@
 const mysql = require('mysql2');
+require('dotenv').config()
 
-
-const con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "nityam@zealousweb",
-  database: "day04db"
+const con = mysql.createPool({
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE
 }).promise();
 
 
@@ -14,7 +14,7 @@ const initializeDatabase = async () => {
     // const check = await connection.query(
     //   ''
     // )
-    await con.connect(); 
+    // await con.connect(); 
     console.log("Connected!");
 
     const users = `

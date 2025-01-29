@@ -1,5 +1,7 @@
 const multer = require('multer')
 const path = require('node:path')
+const {userIdSchema} = require('../validators/uservalidator')
+const db = require('../config/config')
 
 
 const storage = multer.diskStorage({
@@ -41,7 +43,12 @@ const upload = multer({
 }).single('userfiles');
 
  const fileUploadFilter = (req, res, next) => {
-  upload(req, res, function (err) {
+   
+   upload(req, res, function (err) {
+    console.log('file',req.file);
+    if(!req.file){
+      return res.status(400).json({message:'image not found!'})
+    }
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_UNEXPECTED_FILE") {
         return res.status(404).json({
@@ -64,4 +71,27 @@ const upload = multer({
   })
 };
 
-module.exports = {fileUploadFilter} 
+
+const userId_imageMiddleware = async(req, res,next)=>{
+  const Id = parseInt(req.params.userId);
+  const { error } = userIdSchema.validate({ id: Id});
+
+  if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+  }
+  const query = `select 1 from user_images where user_images.userId = ?`;
+  const values = [Id];
+  const image = await db.query(query,values);
+  console.log("user",image[0]);
+  
+  
+  // const user = users.find((user) => user.id === userId);
+  if (image[0].length===0) {
+    console.log('in');
+    
+      return res.status(404).json({ message: "User not found!!!" });
+  }
+  next();
+}
+
+module.exports = {fileUploadFilter, userId_imageMiddleware} 

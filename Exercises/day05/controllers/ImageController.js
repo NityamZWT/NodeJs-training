@@ -12,15 +12,29 @@ const uploadImage = async(req, res) => {
         const file = await userModel.uploadImageModel(req.params.id, files);
         
         if(!req.params.id){
-            return res.status(404).json({massage:"user not found with" + req.params.id})
+            return res.status(404).json({massage:"user not found "})
         }
         response.message = "image added successfully!!";
         res.status(200).json(response)
     }catch(error){
-        console.log('server error!:',error);
-        response.message= error.message;
-        return res.status(500).json(response.message)
+        return res.status(500).json({ message: error['message'] || 'server error!' });
     }
 }
 
-module.exports = {uploadImage}
+const deleteImage = async(req, res)=>{
+    try {
+        const deleteImage = await userModel.deleteImage(req.params.userId);
+        if (!deleteImage) {
+            return res.status(404).json({ message: "User image not found!" });
+        }
+        response.message = "User image deleted successfully!"
+        res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({ message: error['message'] || 'server error!' });
+    }
+}
+
+module.exports = {
+    uploadImage,
+    deleteImage
+}
