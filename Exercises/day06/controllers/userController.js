@@ -198,8 +198,8 @@ const createForm = async (req, res) => {
             return res.status(400).json({ message: error.details[0].message });
         }
         const { name, email, age, role, isActive } = req.body;
-        const {Path} = req.file
-        console.log('file path---',req.file);
+        const Path = req.file.path
+        console.log('file path---',req.file.path);
         
         const newForm = { name, email, age, role, isActive, Path };
 

@@ -253,6 +253,8 @@ const createForm = async(newForm)=>{
 
     let { name, email, age, role, isActive, Path } = newForm;
     try {
+        console.log('PATH--',Path);
+        
         //  let isActive2 = isActive?1:0;
         isActive = isActive === "true"
         const query = `
