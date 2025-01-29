@@ -37,8 +37,8 @@ const getUserById = async (id) => {
         user_profiles.facebookUrl AS profile_facebookUrl,
         user_profiles.instaUrl AS profile_instaUrl
     FROM users 
-    LEFT JOIN user_images ON users.id = user_images.userId 
-    LEFT JOIN user_profiles ON users.id = user_profiles.userId
+    JOIN user_images ON users.id = user_images.userId 
+    JOIN user_profiles ON users.id = user_profiles.userId
     WHERE users.id = ?;`;
 
         const values = [userId];
@@ -188,7 +188,7 @@ const getUserProfile = async (id) => {
         users.isActive,
         users.createdAt AS usersCreatedAt,
         users.updatedAt AS usersUpdatedAt
-        from user_profiles JOIN LEFT users ON users.id = user_profiles.userId WHERE user_profiles.id = ?`
+        from user_profiles JOIN users ON users.id = user_profiles.userId WHERE user_profiles.id = ?`
         const values = [Id];
         const result = await db.query(query, values);
         console.log('result[0]--', result[0]);
@@ -247,6 +247,28 @@ const deleteUserProfile = async (id) => {
 }
 
 
+//---------------------------------------user form model
+
+const createForm = async(newForm)=>{
+
+    let { name, email, age, role, isActive, Path } = newForm;
+    try {
+        //  let isActive2 = isActive?1:0;
+        isActive = isActive === "true"
+        const query = `
+        INSERT INTO user_forms (name, email, age, role, isActive, path)
+        VALUES (?, ?, ?, ?, ?, ?)`;
+
+        const values = [name, email, age, role, isActive, Path]
+        const form = await db.query(query, values);
+
+        return form[0];
+
+    } catch (error) {
+        throw new Error(`something went wrong while getting user:${error}`)
+    }
+}
+
 module.exports = {
     getUsers,
     getUserById,
@@ -258,5 +280,6 @@ module.exports = {
     getUserProfile,
     updateUserProfile,
     deleteUserProfile,
-    deleteImage
+    deleteImage,
+    createForm
 };
