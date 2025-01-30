@@ -3,8 +3,8 @@ const { createUserSchema, updateUserSchema, querySchema, profileCreateSchema, pr
 
 //common response object
 const response = {
-    message: null,
-    data: null
+    // message: null,
+    // data: null
 }
 
 //controller for getting all users
