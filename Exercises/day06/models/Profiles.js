@@ -26,6 +26,6 @@ User_Profile.init({
     },
 )
 User.hasOne(User_Profile, {foreignKey:'userId', onDelete: 'CASCADE'});
-User_Profile.belongsTo(User,{foreignKey:'id', onDelete: 'CASCADE'})
+User_Profile.belongsTo(User,{foreignKey:'userId', onDelete: 'CASCADE'})
 
 module.exports = User_Profile;

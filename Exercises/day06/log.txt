@@ -543,3 +543,5 @@ this is log file.
  	 DELETE 	 http://localhost:3000/api/users/15 	 Fri Jan 31 2025 10:55:15 GMT+0530 (India Standard Time) 
  	 GET 	 http://localhost:3000/api/users/15 	 Fri Jan 31 2025 11:10:12 GMT+0530 (India Standard Time) 
  	 GET 	 http://localhost:3000/api/users/13 	 Fri Jan 31 2025 11:10:18 GMT+0530 (India Standard Time) 
+ 	 DELETE 	 http://localhost:3000/api/users/13 	 Fri Jan 31 2025 11:20:49 GMT+0530 (India Standard Time) 
+ 	 DELETE 	 http://localhost:3000/api/users/12 	 Fri Jan 31 2025 11:24:30 GMT+0530 (India Standard Time) 

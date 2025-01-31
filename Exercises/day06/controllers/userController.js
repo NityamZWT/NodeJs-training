@@ -53,7 +53,7 @@ const createUser = async (req, res) => {
         const userAdded = await userModel.addUser(newUser);
         console.log('userAdded---',userAdded);
 
-        response.message = 'request handled successfully'
+        response.message = 'new user created successfully'
         response.data = userAdded;
         res.status(201).json(response);
     } catch (error) {
@@ -93,7 +93,7 @@ const deleteUser = async (req, res) => {
             return res.status(404).json({ message: "User not delete from database!" });
         }
 
-        response.message = 'User '+req.params.id+' deleted successfully!';
+        response.message = 'User with '+req.params.id+' deleted successfully!';
         // response.data = deletedUser;
         res.status(200).json(response.message);
     } catch (error) {
@@ -133,7 +133,7 @@ const deleteImage = async(req, res)=>{
             return res.status(404).json({ message: "User image not found!" });
         }
         response.message = "User image deleted successfully!"
-        res.status(200).json(response);
+        res.status(200).json(response.message);
     } catch (error) {
         return res.status(500).json({ message: error['message'] || 'server error!' });
     }
@@ -159,6 +159,7 @@ const createUserProfile = async (req, res) => {
         console.log(profileAdded);
 
         response.message = 'user profile created successfully';
+        response.data = profileAdded
 
         res.status(201).json(response);
     } catch (error) {
@@ -175,7 +176,7 @@ const getUserProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found!" });
         }
 
-        response.message = 'user profile with user info is successfully handled'
+        response.message = 'user profile is fetch successfully '
         response.data = userProfile
         res.status(200).json(response);
     }
@@ -215,7 +216,7 @@ const deleteUserProfile = async (req, res) => {
         }
 
         response.message = "User profile deleted successfully!"
-        res.status(200).json(response);
+        res.status(200).json(response.message);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
     }

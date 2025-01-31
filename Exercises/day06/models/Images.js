@@ -28,6 +28,6 @@ User_Image.init({
     },
 )
 User.hasOne(User_Image, {foreignKey:'userId', onDelete: 'CASCADE'});
-User_Image.belongsTo(User,{foreignKey:'id', onDelete: 'CASCADE'})
+User_Image.belongsTo(User,{foreignKey:'userId', onDelete: 'CASCADE'})
 
 module.exports = User_Image;
