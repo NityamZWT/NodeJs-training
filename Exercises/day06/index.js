@@ -1,5 +1,10 @@
 const express = require('express');
 require('dotenv').config();
+const { seq, DBmain } = require('./config/db');
+
+const middleware = require('./middlewares/loggingMiddleware');
+const userRoutes = require('./routes/userRoutes');
+const User_Image = require('./models/Images');
 
 //express instance as app
 const app = express();
@@ -7,8 +12,6 @@ const app = express();
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 
-const middleware = require('./middlewares/loggingMiddleware');
-const userRoutes = require('./routes/userRoutes');
 
 // app configure
 app.use(express.urlencoded({extended:false}))
@@ -19,6 +22,22 @@ app.use('/api',userRoutes);
 app.all('*', (req, res)=>{
     return res.status(400).json({message:"route doesn't exists!!"});
 })
+
+//Database initialization
+async function startServer() {
+    try {
+      await DBmain(); 
+      await seq.sync({alter:true});
+
+  
+      console.log('Database synced successfully.');
+      
+    } catch (error) {
+      console.error('Error syncing database:', error);
+    }
+  }
+
+  startServer()
 
 //app listening at localhost and 3000
 app.listen(port, hostname, () => {

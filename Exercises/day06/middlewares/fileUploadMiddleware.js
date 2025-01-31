@@ -1,7 +1,7 @@
 const multer = require('multer')
 const path = require('node:path')
 const { userIdSchema } = require('../validators/uservalidator')
-const db = require('../config/config')
+const User_Image = require('../models/Images')
 const fs = require('node:fs')
 
 
@@ -85,16 +85,12 @@ const userId_imageMiddleware = async (req, res, next) => {
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
-  const query = `select 1 from user_images where user_images.userId = ?`;
-  const values = [Id];
-  const image = await db.query(query, values);
-  console.log("user", image[0]);
+  
+  const image = await User_Image.findOne({userId:Id})
+  console.log("user", image);
 
 
-  // const user = users.find((user) => user.id === userId);
-  if (image[0].length === 0) {
-    console.log('in');
-
+  if (image === null) {
     return res.status(404).json({ message: "User not found!!!" });
   }
   next();

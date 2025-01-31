@@ -1,4 +1,4 @@
-const users = require('./const')
+const users = require('../const')
 
 function IdValidator(req, res, next) {
     console.log("soecific");

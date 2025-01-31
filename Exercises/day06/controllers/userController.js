@@ -4,7 +4,6 @@ const { createUserSchema, updateUserSchema, querySchema, profileCreateSchema, pr
 //common response object
 const response = {
     message: null,
-    data: null
 }
 
 //controller for getting all users
@@ -29,7 +28,7 @@ const getUserById = async (req, res) => {
         //getUserId - is service function that handle database logic 
         const user = await userModel.getUserById(req.params.id);
         if (!user) {
-            return res.status(404).json({ message: "User not found!" });
+            return res.status(404).json({ message: "User not get for database!" });
         }
         response.message = 'user details with' + req.params.id + 'fetch successfully';
         response.data = user;
@@ -52,10 +51,10 @@ const createUser = async (req, res) => {
 
         //addUser - is service function that handle database logic
         const userAdded = await userModel.addUser(newUser);
-        console.log(userAdded);
+        console.log('userAdded---',userAdded);
 
         response.message = 'request handled successfully'
-
+        response.data = userAdded;
         res.status(201).json(response);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' })
@@ -75,11 +74,11 @@ const updateUser = async (req, res) => {
         // updateUser - is service function that handle database logic
         const updatedUser = await userModel.updateUser(req.params.id, req.body);
         if (!updatedUser) {
-            return res.status(404).json({ message: "User not found!" });
+            return res.status(404).json({ message: "User is not updated in database!" });
         }
-        response.message = 'request handled successfully'
-
-        res.status(200).json(response);
+        response.message = 'Users with '+req.params.id+' Updated successfully'
+        // response.data = updatedUser;
+        res.status(200).json(response.message);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' })
     }
@@ -91,13 +90,52 @@ const deleteUser = async (req, res) => {
         //deleteUser - is service function that handle database logic
         const deletedUser = await userModel.deleteUser(req.params.id);
         if (!deletedUser) {
-            return res.status(404).json({ message: "User not found!" });
+            return res.status(404).json({ message: "User not delete from database!" });
         }
 
-        response.message = "User deleted successfully!"
-        res.status(200).json(response);
+        response.message = 'User '+req.params.id+' deleted successfully!';
+        // response.data = deletedUser;
+        res.status(200).json(response.message);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
+    }
+}
+
+
+//--------------------------------------------------- user Image Controller
+
+//controller for uploading user image 
+const uploadImage = async(req, res) => {
+    try{
+        console.log("enter in controller");
+        console.log('req.body', req.body);
+        
+        const files = req.file;
+        console.log('files',files);
+        const file = await userModel.uploadImageModel(req.params.id, files);
+        
+        if(!req.params.id){
+            return res.status(404).json({massage:"user not found "})
+        }
+        response.message = "image added successfully!!";
+        response.data = file;
+        res.status(200).json(response)
+    }catch(error){
+        return res.status(500).json({ message: error['message'] || 'server error!' });
+    }
+}
+
+//controller for deleting user image 
+const deleteImage = async(req, res)=>{
+    try {
+        const deleteImage = await userModel.deleteImage(req.params.userId);
+        if (!deleteImage) {
+            return res.status(404).json({ message: "User image not found!" });
+        }
+        response.message = "User image deleted successfully!"
+        res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({ message: error['message'] || 'server error!' });
     }
 }
 
@@ -137,10 +175,6 @@ const getUserProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found!" });
         }
 
-        // if(userProfile.length===0) {
-        //     throw new Error('user profile not found!');
-        // }
-
         response.message = 'user profile with user info is successfully handled'
         response.data = userProfile
         res.status(200).json(response);
@@ -165,7 +199,7 @@ const updateUserProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found!" });
         }
         response.message = 'User Profile Updated successfully!'
-        res.status(200).json(response);
+        res.status(200).json(response.message);
     } catch (error) {
         return res.status(error.code || 500).json({ message: error['message'] || 'server error!' });
     }
@@ -227,5 +261,7 @@ module.exports = {
     getUserProfile,
     updateUserProfile,
     deleteUserProfile,
-    createForm
+    createForm,
+    deleteImage,
+    uploadImage
 };

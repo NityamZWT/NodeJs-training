@@ -4,7 +4,6 @@ const userController = require('../controllers/userController');
 const idValidatorMiddleware = require('../middlewares/idValidatorMiddleware');
 const {id_userProfileMiddleware, userId_userProfileMiddleware} = require('../middlewares/userProfileMiddleware')
 const {form_fileUploadFilter} = require('../middlewares/formsMiddleware')
-const imageController = require('../controllers/imageController')
 
 const {fileUploadFilter, userId_imageMiddleware} = require('../middlewares/fileUploadMiddleware')
 
@@ -21,9 +20,9 @@ router.patch('/users/:id', idValidatorMiddleware, userController.updateUser);
 router.delete('/users/:id', idValidatorMiddleware, userController.deleteUser);
 
 //user-image routes
-router.post('/upload-image/:id', idValidatorMiddleware, fileUploadFilter, imageController.uploadImage)
+router.post('/upload-image/:id', idValidatorMiddleware, fileUploadFilter, userController.uploadImage)
 
-router.delete('/user-images/:userId', userId_imageMiddleware, imageController.deleteImage)
+router.delete('/user-images/:userId', userId_imageMiddleware, userController.deleteImage)
 
 //user-profile routes
 router.post('/user-profile', userId_userProfileMiddleware, userController.createUserProfile);

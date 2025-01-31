@@ -1,13 +1,18 @@
-const db = require('../config/config')
+// const db = require('../config/db')
 const Path = require('node:path');
+const User = require('../models/Users');
+const { where } = require('sequelize');
+const User_Image = require('../models/Images');
+const User_Profile = require('../models/Profiles')
 
 // sql and database logic for getting all users from usersdb
 const getUsers = async () => {
     try {
-        const query = `SELECT * FROM users`
-        const result = await db.query(query)
-        return result[0];
-    } catch (error) {
+        const result = await User.findAll();
+        console.log('result--', result);
+        return result;
+    }
+    catch (error) {
         throw new Error(`something went wrong while getting user:${error}`)
     }
 }
@@ -19,32 +24,16 @@ const getUserById = async (id) => {
         const userId = parseInt(id);
         console.log('userId--', userId);
 
-        const query = `SELECT 
-        users.id AS user_Id,
-        users.email AS user_email,
-        users.age AS user_age,
-        users.role AS user_role,
-        users.isActive AS user_isActive,
-        user_images.id AS image_Id,
-        user_images.imageName AS image_name,
-        user_images.path AS image_path,
-        user_images.mimetype AS image_type,
-        user_images.extension AS image_extention,
-        user_images.size AS image_size,
-        user_profiles.id AS profile_Id,
-        user_profiles.bio AS profile_bio,
-        user_profiles.linkedInUrl AS profile_linkedInUrl,
-        user_profiles.facebookUrl AS profile_facebookUrl,
-        user_profiles.instaUrl AS profile_instaUrl
-    FROM users 
-    JOIN user_images ON users.id = user_images.userId 
-    JOIN user_profiles ON users.id = user_profiles.userId
-    WHERE users.id = ?;`;
+        const result = await User.findByPk(userId,
+            {
+                include: [
+                    { model: User_Image, required: false },
+                    { model: User_Profile, required: false }
+                ]
+            }
+        )
 
-        const values = [userId];
-        const result = await db.query(query, values);
-
-        return result[0];
+        return result;
     } catch (error) {
         throw new Error(`something went wrong while getting user:${error}`)
     }
@@ -52,28 +41,19 @@ const getUserById = async (id) => {
 
 // sql and database logic for ceating users in usersdb
 const addUser = async (newUser) => {
-    const { name, email, age, role, isActive } = newUser;
     try {
-        const query = `
-        INSERT INTO users (name, email, age, role, isActive)
-        VALUES (?, ?, ?, ?, ?)`;
-
-        const values = [name, email, age, role, isActive]
-        const userEntry = await db.query(query, values);
-
-        return userEntry[0];
-
-    } catch (error) {
+        const result = await User.create(newUser);
+        console.log('result--', result);
+        return [result];
+    }
+    catch (error) {
         throw new Error(`something went wrong while getting user:${error}`)
     }
 }
 
 // sql and database logic for updating specific users from usersdb
 const updateUser = async (id, updatedData) => {
-
     try {
-        const userId = parseInt(id);
-
         //checking if updatedData object is not empty
         if (Object.keys(updatedData).length === 0) {
             console.log('enter in condition:', Object.keys(updatedData).length);
@@ -81,24 +61,12 @@ const updateUser = async (id, updatedData) => {
             throw new Error('please add data field you want to update!');
         }
 
-        let query = `UPDATE users SET `
-        const params = [];
-        const keys = Object.keys(updatedData);
-        keys.forEach((key, index) => {
-            query += `${key} = ?`;
-            params.push(updatedData[key]);
-
-            if (index < keys.length - 1) {
-                query += ', ';
-            }
-        });
-
-        query = query + `where users.id = ?`
-        params.push(userId);
-        console.log(query);
-        const result = await db.query(query, params);
-        return result[0];
-    } catch (error) {
+        const userId = parseInt(id);
+        const result = await User.update(updatedData, { where: { id: userId } })
+        console.log("result---", result);
+        return result;
+    }
+    catch (error) {
         throw new Error(`something went wrong while getting user:${error}`)
     }
 }
@@ -106,15 +74,15 @@ const updateUser = async (id, updatedData) => {
 // sql and database logic for deleting specific users from usersdb
 const deleteUser = async (id) => {
     try {
-        const userIndex = parseInt(id);
-        const query = `DELETE FROM users WHERE users.id = ?`
-        const values = [userIndex];
-        const result = await db.query(query, values);
-        return result[0];
+        const userId = parseInt(id);
+        const result = await User.destroy({ where: { id: userId } });
+        console.log('result--', result);
+        return result;
     } catch (error) {
         throw new Error('something went wrong while deleting user!')
     }
 }
+
 
 //--------------------------------------------------------user Images model
 
@@ -123,14 +91,22 @@ const uploadImageModel = async (id, files) => {
     try {
         console.log("enter in the model");
         const userId = parseInt(id);
+        console.log('Id--', userId);
         const extention = Path.extname(files.filename)
-        const { filename, path, mimetype, size } = files;
-        const query = `INSERT INTO user_images ( userId, imageName, path, mimeType, extension, size)
-            VALUES (?, ?, ?, ?, ?, ?)`;
-        const values = [userId, filename, path, mimetype, extention, size]
-        const result = await db.query(query, values)
-        console.log('index', userId);
-        return result[0];
+        console.log('extention--', extention);
+        const newImage = {
+            userId: userId,
+            imageName: files.filename,
+            path: files.path,
+            mimeType: files.mimetype,
+            extention: extention,
+            size: files.size
+        }
+
+        const result = await User_Image.create(newImage)
+        console.log('result--', result);
+
+        return result;
     } catch (error) {
         throw new Error('something wrong in handling file')
     }
@@ -140,14 +116,11 @@ const uploadImageModel = async (id, files) => {
 const deleteImage = async (userId) => {
     try {
         const Id = parseInt(userId);
-        const query = `DELETE FROM user_images WHERE userId = ?`;
-        const values = [Id];
-        const result = await db.query(query, values);
-        return result[0];
+        const result = User_Image.destroy({ where: { userId: Id } })
+        return result;
     } catch (error) {
         throw new Error('something went wrong while deleting image!')
     }
-
 }
 
 
@@ -157,15 +130,9 @@ const deleteImage = async (userId) => {
 const addUserProfile = async (newProfile) => {
     const { userId, bio, linkedInUrl, facebookUrl, instaUrl } = newProfile;
     try {
-        const query = `
-        INSERT INTO user_profiles (userId, bio, linkedInUrl, facebookUrl, instaUrl)
-        VALUES (?, ?, ?, ?, ?)`;
 
-        const values = [userId, bio, linkedInUrl, facebookUrl, instaUrl]
-
-        const result = await db.query(query, values);
-
-        return result[0];
+        const result = await User_Profile.create(newProfile)
+        return result;
     }
     catch (error) {
         throw new Error('something went wrong while creating profile!')
@@ -179,20 +146,9 @@ const getUserProfile = async (id) => {
 
         const Id = parseInt(id);
         console.log('userId', Id);
-        const query =
-            `select user_profiles.*,
-        users.name,
-        users.email,
-        users.age,
-        users.role,
-        users.isActive,
-        users.createdAt AS usersCreatedAt,
-        users.updatedAt AS usersUpdatedAt
-        from user_profiles JOIN users ON users.id = user_profiles.userId WHERE user_profiles.id = ?`
-        const values = [Id];
-        const result = await db.query(query, values);
-        console.log('result[0]--', result[0]);
-        return result[0];
+        const result = await User_Profile.findByPk(Id)
+        console.log('result[0]--', result);
+        return result;
     } catch (error) {
         throw new Error('something went wrong while getting profile!')
     }
@@ -210,23 +166,13 @@ const updateUserProfile = async (id, updatedData) => {
             throw new Error('please add data field you want to update!');
         }
 
-        let query = `UPDATE user_profiles SET `
-        const params = [];
-        const keys = Object.keys(updatedData);
-        keys.forEach((key, index) => {
-            query += `${key} = ?`;
-            params.push(updatedData[key]);
-
-            if (index < keys.length - 1) {
-                query += ', ';
+        const result = await User_Profile.update(updatedData, {
+            where: {
+                id: Id
             }
-        });
-        console.log(query);
-        query = query + `where user_profiles.id = ?`
-        params.push(Id);
-        console.log(query);
-        const result = await db.query(query, params);
-        return result[0];
+        })
+
+        return result;
 
     } catch (error) {
         throw new Error('something went wrong while updating profile!')
@@ -237,10 +183,12 @@ const updateUserProfile = async (id, updatedData) => {
 const deleteUserProfile = async (id) => {
     try {
         const Id = parseInt(id);
-        const query = `DELETE FROM user_profiles WHERE user_profiles.id = ?`;
-        const values = [Id];
-        const result = await db.query(query, values);
-        return result[0];
+        const result = await User_Profile.delete({
+            where: {
+                id: Id
+            }
+        })
+        return result;
     } catch (error) {
         throw new Error('something went wrong while deleting profile!')
     }
@@ -249,12 +197,12 @@ const deleteUserProfile = async (id) => {
 
 //---------------------------------------user form model
 
-const createForm = async(newForm)=>{
+const createForm = async (newForm) => {
 
     let { name, email, age, role, isActive, Path } = newForm;
     try {
-        console.log('PATH--',Path);
-        
+        console.log('PATH--', Path);
+
         //  let isActive2 = isActive?1:0;
         isActive = isActive === "true"
         const query = `
