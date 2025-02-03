@@ -101,10 +101,11 @@ const {Sequelize} = require('sequelize');
 
 
 
-const seq = new Sequelize('day04db', 'root', 'nityam@zealousweb', {
-  host: 'localhost',
-  dialect: 'mysql'
+const seq = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD, {
+  host: process.env.HOST,
+  dialect:process.env.DIALECT 
 } );
+
 async function DBmain(){
   try {
     await seq.authenticate();
