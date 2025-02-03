@@ -10,11 +10,16 @@ const response = {
 //controller for getting all users
 const getAllUsers = async (req, res) => {
     try {
-        const limit = req.query.limit;
-        const offset = req.query.offset;
-
+        const limit = parseInt(req.query.limit,10) || 10;
+        const page = parseInt(req.query.page, 10) || 10;
+        console.log('page--',page);
+        console.log('limit--',limit);
+        
         //getUser - is service function that handle database logic
-        const users = await userModel.getUsers(limit, offset);
+        const users = await userModel.getUsers(limit, page);
+        if(users.length === 0){
+            return res.status(200).json({message:"No user is found or may be you are passing page number that exceed data size."})
+        }
         response.message = 'All users fetched successfully!'
         response.data = users;
 

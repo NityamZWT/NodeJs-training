@@ -10,9 +10,17 @@ const {generateToken} = require('../utilities/jwtToken');
 const { log } = require('node:console');
 
 // sql and database logic for getting all users from usersdb
-const getUsers = async (limit, offset) => {
+const getUsers = async (limit, page) => {
+    const offset = (page-1) * limit;
+    console.log('offset--',offset);
+    
     try {
-        const result = await User.findAll();
+        const result = await User.findAll({
+            limit,
+            offset,
+        });
+        console.log('result--',result);
+        
         return result;
     }
     catch (error) {
