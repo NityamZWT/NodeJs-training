@@ -4,23 +4,41 @@ const User = require('../models/Users');
 const { where } = require('sequelize');
 const User_Image = require('../models/Images');
 const User_Profile = require('../models/Profiles');
-const { loginUser } = require('../controllers/userController');
 const bcrypt = require('bcrypt');
-const {generateToken} = require('../utilities/jwtToken');
-const { log } = require('node:console');
+const { generateToken } = require('../utilities/jwtToken');
+const { Op } = require('sequelize');
 
 // sql and database logic for getting all users from usersdb
-const getUsers = async (limit, page) => {
-    const offset = (page-1) * limit;
-    console.log('offset--',offset);
-    
+const getUsers = async (limit, page, col, order, isActive, role, age) => {
+    const offset = (page - 1) * limit;
+
     try {
+        let query = {};
+        if (isActive!==null) {
+            console.log('isActive--',isActive);
+
+            query.isActive = isActive
+        }
+        if (role) {
+            console.log('role--',role);
+            
+            query.role = role
+        }
+        if (age) {
+            console.log('age--',age);
+
+            query.age = { [Op.gt]: parseInt(age) };
+        }
+        console.log('query', query);
+        
         const result = await User.findAll({
+            where:query,
+            order: [[col, order]],
             limit,
             offset,
         });
-        console.log('result--',result);
-        
+        // console.log('result--', result);
+
         return result;
     }
     catch (error) {
@@ -63,21 +81,21 @@ const addUser = async (newUser) => {
 }
 
 //logic for login user 
-const signinUser = async(newlogin)=>{
+const signinUser = async (newlogin) => {
     try {
-        const {email, password} = newlogin;
-        result = await User.findOne({where:{email:email}})
-        console.log('result--',result);
-        if(result === null){throw new Error('User not found!');}
+        const { email, password } = newlogin;
+        result = await User.findOne({ where: { email: email } })
+        console.log('result--', result);
+        if (result === null) { throw new Error('User not found!'); }
         const verify = bcrypt.compareSync(password, result.password);
-        if(verify){  
-            console.log('verify--',verify);
-            
+        if (verify) {
+            console.log('verify--', verify);
+
             const Token = generateToken(result.id, result.email, result.password);
-            
-            return {user:result, Token};
+
+            return { user: result, Token };
         }
-        else{
+        else {
             throw new Error('Password is Incorect!')
         }
     } catch (error) {

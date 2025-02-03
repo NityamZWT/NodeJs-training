@@ -6,15 +6,15 @@ const privatekey = process.env.JWT_PRIVATE_KEY;
 const Authentication = (req, res, next)=>{
     try {
         const token = req.headers.authorization;
-        console.log('token--',token);
+        // console.log('token--',token);
         
         const jwtToken = token.split(' ')[1];
-        console.log('jwttoken--',jwtToken);
+        // console.log('jwttoken--',jwtToken);
         jwt.verify(jwtToken, privatekey,(err, decoded)=>{
             if(err){
                 res.status(400).json({message:'user is not authorized!'})
             }
-            console.log('verifysss---',decoded.id);
+            // console.log('verifysss---',decoded.id);
             
             next()
         })

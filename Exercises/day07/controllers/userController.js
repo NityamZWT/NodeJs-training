@@ -11,12 +11,15 @@ const response = {
 const getAllUsers = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit,10) || 10;
-        const page = parseInt(req.query.page, 10) || 10;
-        console.log('page--',page);
-        console.log('limit--',limit);
+        const page = parseInt(req.query.page, 10) || 1;
+        const col = req.query?.col||'createdAt'
+        const order = req.query?.order||'ASC'
+        const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : true;
+        const role = req.query.role??''
+        const age = req.query.age??'' 
         
         //getUser - is service function that handle database logic
-        const users = await userModel.getUsers(limit, page);
+        const users = await userModel.getUsers(limit, page, col, order, isActive, role, age);
         if(users.length === 0){
             return res.status(200).json({message:"No user is found or may be you are passing page number that exceed data size."})
         }
