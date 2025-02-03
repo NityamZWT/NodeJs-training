@@ -6,6 +6,7 @@ const createUserSchema = Joi.object({
     age: Joi.number().integer().min(18).required(),
     role: Joi.string().valid('Admin','User').required(),
     isActive: Joi.boolean().valid(true, false).default(true),
+    password: Joi.string().required(),
 });
 
 const updateUserSchema = Joi.object({
@@ -14,6 +15,7 @@ const updateUserSchema = Joi.object({
     age: Joi.number().integer().min(18).optional(),
     role: Joi.string().valid('Admin','User').optional(),
     isActive: Joi.boolean().valid(true,false).optional(),
+    password: Joi.string().optional(),
 });
 
 const userIdSchema = Joi.object({

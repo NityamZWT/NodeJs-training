@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-const {sequelize} = require("./models/index");
+const { seq, DBmain } = require('./config/db');
 
 const middleware = require('./middlewares/loggingMiddleware');
 const userRoutes = require('./routes/userRoutes');
@@ -26,10 +26,8 @@ app.all('*', (req, res)=>{
 //Database initialization
 async function startServer() {
     try {
-      // console.log('DB INTIAIL--',sequelize);
-      
-      await sequelize.authenticate();
-      await sequelize.sync({alter:true});
+      await DBmain(); 
+      await seq.sync({alter:true});
 
   
       console.log('Database synced successfully.');

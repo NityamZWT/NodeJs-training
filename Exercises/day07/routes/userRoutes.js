@@ -4,34 +4,41 @@ const userController = require('../controllers/userController');
 const idValidatorMiddleware = require('../middlewares/idValidatorMiddleware');
 const {id_userProfileMiddleware, userId_userProfileMiddleware} = require('../middlewares/userProfileMiddleware')
 const {form_fileUploadFilter} = require('../middlewares/formsMiddleware')
+const Authentication = require('../middlewares/Authentication')
 
 const {fileUploadFilter, userId_imageMiddleware} = require('../middlewares/fileUploadMiddleware')
 
 
 //users routes
-router.get('/users', userController.getAllUsers);
+router.get('/users',Authentication, userController.getAllUsers);
 
-router.get('/users/:id', idValidatorMiddleware, userController.getUserById);
+router.get('/users/:id', Authentication, idValidatorMiddleware, userController.getUserById);
 
-router.post('/users', userController.createUser);
+//signup route for users
+router.post('/signup', userController.createUser);
 
-router.patch('/users/:id', idValidatorMiddleware, userController.updateUser);
+router.patch('/users/:id',Authentication, idValidatorMiddleware, userController.updateUser);
 
-router.delete('/users/:id', idValidatorMiddleware, userController.deleteUser);
+router.delete('/users/:id', Authentication, idValidatorMiddleware, userController.deleteUser);
+
+
+// login route for users
+router.post('/login', userController.loginUser);
+
 
 //user-image routes
-router.post('/upload-image/:id', idValidatorMiddleware, fileUploadFilter, userController.uploadImage)
+router.post('/upload-image/:id',Authentication, idValidatorMiddleware, fileUploadFilter, userController.uploadImage)
 
-router.delete('/user-images/:userId', userId_imageMiddleware, userController.deleteImage)
+router.delete('/user-images/:userId',Authentication, userId_imageMiddleware, userController.deleteImage)
 
 //user-profile routes
-router.post('/user-profile', userId_userProfileMiddleware, userController.createUserProfile);
+router.post('/user-profile',Authentication, userId_userProfileMiddleware, userController.createUserProfile);
 
-router.get('/user-profile/:id', id_userProfileMiddleware, userController.getUserProfile);
+router.get('/user-profile/:id', Authentication, id_userProfileMiddleware, userController.getUserProfile);
 
-router.put('/user-profile/:id', id_userProfileMiddleware, userController.updateUserProfile);
+router.put('/user-profile/:id', Authentication, id_userProfileMiddleware, userController.updateUserProfile);
 
-router.delete('/user-profile/:id',id_userProfileMiddleware, userController.deleteUserProfile)
+router.delete('/user-profile/:id', Authentication,id_userProfileMiddleware, userController.deleteUserProfile)
 
 //user_forms routes
 router.post('/user-forms', form_fileUploadFilter, userController.createForm)

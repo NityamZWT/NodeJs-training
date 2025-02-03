@@ -23,11 +23,14 @@
   "homepage": "https://github.com/NityamZWT/NodeJs-training#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.12.0",
-    "nodemon": "3.1.9"
+    "nodemon": "3.1.9",
+    "sequelize": "^6.37.5"
   }
 }

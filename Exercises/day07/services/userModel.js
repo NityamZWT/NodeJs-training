@@ -3,13 +3,16 @@ const Path = require('node:path');
 const User = require('../models/Users');
 const { where } = require('sequelize');
 const User_Image = require('../models/Images');
-const User_Profile = require('../models/Profiles')
+const User_Profile = require('../models/Profiles');
+const { loginUser } = require('../controllers/userController');
+const bcrypt = require('bcrypt');
+const {generateToken} = require('../utilities/jwtToken');
+const { log } = require('node:console');
 
 // sql and database logic for getting all users from usersdb
-const getUsers = async () => {
+const getUsers = async (limit, offset) => {
     try {
         const result = await User.findAll();
-        console.log('result--', result);
         return result;
     }
     catch (error) {
@@ -39,15 +42,38 @@ const getUserById = async (id) => {
     }
 }
 
-// sql and database logic for ceating users in usersdb
+// sql and database logic for ceating users in usersdb or signup
 const addUser = async (newUser) => {
     try {
         const result = await User.create(newUser);
-        console.log('result--', result);
+        // console.log('result--', result);
         return [result];
     }
     catch (error) {
         throw new Error(`something went wrong while getting user:${error}`)
+    }
+}
+
+//logic for login user 
+const signinUser = async(newlogin)=>{
+    try {
+        const {email, password} = newlogin;
+        result = await User.findOne({where:{email:email}})
+        console.log('result--',result);
+        if(result === null){throw new Error('User not found!');}
+        const verify = bcrypt.compareSync(password, result.password);
+        if(verify){  
+            console.log('verify--',verify);
+            
+            const Token = generateToken(result.id, result.email, result.password);
+            
+            return {user:result, Token};
+        }
+        else{
+            throw new Error('Password is Incorect!')
+        }
+    } catch (error) {
+        throw new Error(error)
     }
 }
 
@@ -231,5 +257,6 @@ module.exports = {
     updateUserProfile,
     deleteUserProfile,
     deleteImage,
-    createForm
+    createForm,
+    signinUser
 };

@@ -1,6 +1,7 @@
 const userModel = require('../services/userModel');
 const { createUserSchema, updateUserSchema, querySchema, profileCreateSchema, profileUpdateSchema } = require('../validators/uservalidator')
 
+
 //common response object
 const response = {
     message: null,
@@ -9,11 +10,13 @@ const response = {
 //controller for getting all users
 const getAllUsers = async (req, res) => {
     try {
+        const limit = req.query.limit;
+        const offset = req.query.offset;
+
         //getUser - is service function that handle database logic
-        const users = await userModel.getUsers();
+        const users = await userModel.getUsers(limit, offset);
         response.message = 'All users fetched successfully!'
         response.data = users;
-        console.log(response);
 
         res.status(200).json(response);
 
@@ -38,7 +41,7 @@ const getUserById = async (req, res) => {
     }
 }
 
-//controller for creating new user
+//controller for creating new user or signup
 const createUser = async (req, res) => {
     try {
         const { error } = createUserSchema.validate(req.body);
@@ -46,12 +49,12 @@ const createUser = async (req, res) => {
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
-        const { name, email, age, role, isActive } = req.body;
-        const newUser = { name, email, age, role, isActive };
+        const { name, email, password, age, role, isActive } = req.body;
+        const newUser = { name, email, password, age, role, isActive };
 
         //addUser - is service function that handle database logic
         const userAdded = await userModel.addUser(newUser);
-        console.log('userAdded---',userAdded);
+        // console.log('userAdded---',userAdded);
 
         response.message = 'new user created successfully'
         response.data = userAdded;
@@ -61,6 +64,24 @@ const createUser = async (req, res) => {
 
     }
 }
+
+//controller for login specific users by email and password 
+const loginUser = async(req, res)=>{
+    try {
+        const {email, password} = req.body;
+        const newlogin = {email, password};
+    
+        const login = await userModel.signinUser(newlogin);
+        
+        response.message = 'user login successfully!';
+        response.data = login;
+        
+        res.status(200).json(response)
+    } catch (error) {
+        return res.status(error.code || 500).json({ message: error['message'] || 'server error!' })
+    }
+}
+
 
 //controller for updating specific users by Id and updated values in body
 const updateUser = async (req, res) => {
@@ -264,5 +285,6 @@ module.exports = {
     deleteUserProfile,
     createForm,
     deleteImage,
-    uploadImage
+    uploadImage,
+    loginUser
 };
