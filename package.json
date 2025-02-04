@@ -9,7 +9,8 @@
     "day4": "node ./Exercises/day04/index.js",
     "day5": "node ./Exercises/day05/index.js",
     "day6": "node ./Exercises/day06/index.js",
-    "day7": "node ./Exercises/day07/index.js"
+    "day7": "node ./Exercises/day07/index.js",
+    "ecommerce": "node ./Exercises/Ecommerce_Application_Evaluation_Test/index.js"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "mysql2": "^3.12.0",
     "nodemon": "3.1.9",
     "sequelize": "^6.37.5",
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "yup": "^1.6.1"
   }
 }

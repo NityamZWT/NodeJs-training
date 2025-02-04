@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { logger } = require('sequelize/lib/utils/logger');
 require('dotenv').config();
+
 const privatekey = process.env.JWT_PRIVATE_KEY;
 
 const Authentication = (req, res, next)=>{
