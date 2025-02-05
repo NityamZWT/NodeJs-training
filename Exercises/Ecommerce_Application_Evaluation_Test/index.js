@@ -9,6 +9,11 @@ const responseHandler = require('./utilities/responseHandler')
 const authRoutes = require('./routers/authRoutes');
 const userRoutes = require('./routers/userRoutes')
 const categoryRoutes = require('./routers/categoryRoutes')
+const productRoutes = require('./routers/productRoutes')
+const cartRoutes = require('./routers/cartRoutes')
+const whishlistRoutes = require('./routers/whishlistRoutes')
+const orderRoutes = require('./routers/orderRoutes')
+
 
 
 const hostname = process.env.HOSTNAME;
@@ -20,6 +25,13 @@ app.use(express.json());
 app.use('/api/auth',authRoutes);
 app.use('/api/users',userRoutes);
 app.use('/api/categories', categoryRoutes)
+app.use('/api/products',productRoutes)
+app.use('/api/cart',cartRoutes)
+app.use('/api/whishlist',whishlistRoutes)
+app.use('/api/orders',orderRoutes)
+
+
+
 app.all('*', (req, res)=>{
     return responseHandler(res, 404, false, "No such route is available");
 })
@@ -29,7 +41,7 @@ async function dbConnection() {
       await sequelize.authenticate();
       console.log("connect to database");
 
-      await sequelize.sync({alter:true});
+      await sequelize.sync({alter: true});
       console.log('Database synced successfully.');
       
     } catch (error) {

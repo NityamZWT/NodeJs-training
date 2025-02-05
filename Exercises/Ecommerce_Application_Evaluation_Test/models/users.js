@@ -5,8 +5,8 @@ const saltRounds = 10;
 module.exports = (sequelize) => {
     class User extends Model {
         static associate(models) {
-            // One-to-Many: A Category has many Products
-            this.hasMany(models.Cart, {
+        //     // One-to-Many: A Category has many Products
+            this.hasOne(models.Cart, {
               foreignKey: "user_id",
               as: "cart", 
             //   onDelete: "CASCADE", 
@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
                 as: "order", 
               //   onDelete: "CASCADE", 
               });
-              this.hasMany(models.Whishlist, {
+              this.hasOne(models.Whishlist, {
                 foreignKey: "user_id",
                 as: "whishlist", 
               //   onDelete: "CASCADE", 
@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
     User.init({
         first_name: { type: DataTypes.STRING(100), allowNull: false },
         last_name: { type: DataTypes.STRING(100), allowNull: false },
-        email: { type: DataTypes.STRING(255), allowNull: false, unique: true },
+        email: { type: DataTypes.STRING(255), allowNull: false },
         password: {
             type: DataTypes.STRING(255),
             set(value) {
@@ -37,7 +37,11 @@ module.exports = (sequelize) => {
                     console.log('hashed--', bcrypt.hashSync(value, saltRounds));
                     this.setDataValue('password', bcrypt.hashSync(value, saltRounds))
                 }
-            }
+            },
+            // Hides the password whenever it's accessed
+            // get() {
+            //     return undefined; 
+            //   }
         },
         role:{
             type: DataTypes.ENUM('admin', 'customer'), defaultValue:'customer',
@@ -54,6 +58,13 @@ module.exports = (sequelize) => {
         modelName: "User", 
         tableName: "users", 
         timestamps: true, 
+        indexes: [
+            {
+              unique: true,
+              fields: ["email"],
+              name: "unique_email_index",
+            },
+          ],
     })
     return User;
 }

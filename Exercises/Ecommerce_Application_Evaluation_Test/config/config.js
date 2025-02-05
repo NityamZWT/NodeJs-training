@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 module.exports={
   "development": {
-    "username": "root",
-    "password": "nityam@zealousweb",
-    "database": "ecommercedb",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": process.env.USER,
+    "password": process.env.PASSWORD,
+    "database": process.env.ECOMMERCE_DB,
+    "host": process.env.HOST,
+    "dialect": process.env.DIALECT
   },
   "test": {
     "username": "root",

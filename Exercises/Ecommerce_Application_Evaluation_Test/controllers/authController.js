@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const responseHandler = require('../utilities/responseHandler')
 const { generateToken } = require('../utilities/jwtTokenGenerator');
 const {registrationSchema, loginSchema} = require('../validators/authValidator')
+const yup = require('yup');
 
 
 
@@ -15,8 +16,24 @@ try {
 
     return responseHandler(res, 201, true,"registration Successfull!");
 } catch (error) {
-    if (error.name === 'ValidationError') {
-        return responseHandler(res, 400, false, 'validation error',null, error.errors );
+    if (error.name === 'SequelizeUniqueConstraintError') {
+        const field = error.errors[0].path; 
+        return responseHandler(res, 400, false, `${field.charAt(0).toUpperCase() + field.slice(1)} already exists.`)
+    }
+
+    if (error instanceof yup.ValidationError) {
+        console.log("formatted--", error.inner);
+    
+        const formattedErrors = error.inner.map(err => ({
+            message: err.message
+        }));
+    
+        const responseMessage = formattedErrors.map((i)=>{
+            console.log(i.message);
+            
+            return i.message
+        })
+        return responseHandler(res, 400, false, responseMessage, null, formattedErrors);
     }
     next(error)
 }
@@ -46,8 +63,19 @@ const login = async(req, res, next)=>{
         }
 
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            return responseHandler(res, 400, false, 'validation error',null, error.errors );
+        if (error instanceof yup.ValidationError) {
+            console.log("formatted--", error.inner);
+        
+            const formattedErrors = error.inner.map(err => ({
+                message: err.message
+            }));
+        
+            const responseMessage = formattedErrors.map((i)=>{
+                console.log(i.message);
+                
+                return i.message
+            })
+            return responseHandler(res, 400, false, responseMessage, null, formattedErrors);
         }
     next(error)
     }

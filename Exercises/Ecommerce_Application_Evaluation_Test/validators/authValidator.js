@@ -2,14 +2,14 @@ const yup = require('yup');
 
 const registrationSchema = yup.object({
     first_name: yup
-    .string()
+    .string("First name must be string")
     .trim()
     .min(2, 'First name must be at least 2 characters long')
     .max(50, 'First name cannot exceed 50 characters')
     .required('First name is required'),
 
     last_name: yup
-    .string()
+    .string("Last name must be string")
     .trim()
     .min(2, 'Last name must be at least 2 characters long')
     .max(50, 'Last name cannot exceed 50 characters')
@@ -36,6 +36,7 @@ const registrationSchema = yup.object({
       .string()
       .oneOf(['admin', 'customer'], 'Role must be either admin or customer')
       .default('customer')
+      .transform(value => (value ? value.toLowerCase() : value))
       .required('Role is required'),
 })
 

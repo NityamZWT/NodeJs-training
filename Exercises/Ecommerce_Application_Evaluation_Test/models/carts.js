@@ -4,7 +4,7 @@ const { DataTypes, Model } = require("sequelize");
 module.exports = (sequelize) => {
     class Cart extends Model {
         static associate(models) {
-            // Many-to-One: A Product belongs to one Category
+        //     // Many-to-One: A Product belongs to one Category
             this.belongsTo(models.User, {
                 foreignKey: "user_id",
                 as: "user", 

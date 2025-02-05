@@ -3,16 +3,16 @@ const { DataTypes, Model } = require("sequelize");
 module.exports = (sequelize) => {
     class Product extends Model {
         static associate(models) {
-            // Many-to-One: A Product belongs to one Category
+        //     // Many-to-One: A Product belongs to one Category
             this.belongsTo(models.Category, {
                 foreignKey: "category_id",
                 as: "category", 
-                // onDelete: "CASCADE",
+                onDelete: "CASCADE",
             });
             this.hasMany(models.Cart, {
                 foreignKey: "product_id",
                 as: "cart", 
-              //   onDelete: "CASCADE", 
+                // onDelete: "CASCADE", 
               });
               this.hasMany(models.Order_item, {
                 foreignKey: "product_id",

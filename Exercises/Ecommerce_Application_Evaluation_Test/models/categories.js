@@ -8,19 +8,26 @@ module.exports = (sequelize) => {
             this.hasMany(models.Product, {
               foreignKey: "category_id",
               as: "products", 
-            //   onDelete: "CASCADE", 
+              onDelete: "CASCADE", 
             });
           }
      }
 
     Category.init({
-        name: { type: DataTypes.STRING(100), allowNull: false, unique:true },
+        name: { type: DataTypes.STRING(100), allowNull: false },
     },
     {
         sequelize, 
         modelName: "Category", 
         tableName: "categories", 
-        timestamps: true, 
+        timestamps: true,
+        indexes: [
+            {
+              unique: true,
+              fields: ["name"],
+              name: "unique_name_index",
+            },
+          ], 
     })
     return Category;
 }

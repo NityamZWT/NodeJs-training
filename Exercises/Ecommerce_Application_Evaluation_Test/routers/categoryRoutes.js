@@ -5,6 +5,8 @@ const authentication = require('../middlewares/authentication')
 
 
 router.post('/', authentication('admin'), categoryControllers.createCategory);
+router.get('/', categoryControllers.getCategory);
+
 
 
 module.exports = router
