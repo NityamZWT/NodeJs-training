@@ -42,7 +42,7 @@ async function dbConnection() {
       await sequelize.authenticate();
       console.log("connect to database");
 
-      await sequelize.sync({force: true});
+      await sequelize.sync({alter: true});
       console.log('Database synced successfully.');
       
     } catch (error) {

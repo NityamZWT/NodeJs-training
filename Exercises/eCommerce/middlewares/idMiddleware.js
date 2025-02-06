@@ -1,6 +1,6 @@
 const { idSchema } = require('../validators/idValidator')
 const yup = require('yup');
-const {responseHandler, handleYupError} = require('../utilities/customHandler')
+const { handleYupError} = require('../utilities/customHandler')
 
 //id in params error handler
 const idMiddleware = async (req, res, next) => {
