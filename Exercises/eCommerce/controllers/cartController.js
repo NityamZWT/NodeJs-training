@@ -1,5 +1,5 @@
 const { Cart, Product } = require('../models');
-const {responseHandler, handleYupError} = require('../utilities/responseHandler')
+const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { cartCreateSchema } = require('../validators/cartValidator')
 const yup = require('yup');
 

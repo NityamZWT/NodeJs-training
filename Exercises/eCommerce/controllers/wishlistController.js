@@ -1,5 +1,5 @@
 const { Product, whishlist } = require('../models');
-const {responseHandler, handleYupError} = require('../utilities/responseHandler')
+const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { wishlistCreateSchema } = require('../validators/wishlistValidator')
 const yup = require('yup');
 

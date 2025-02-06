@@ -1,4 +1,4 @@
-const {responseHandler, handleYupError} = require('../utilities/responseHandler')
+const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { User } = require('../models');
 const { profileUpdateSchema } = require('../validators/profileValidator')
 const {userQuerySchema} = require('../validators/userValidator')
@@ -41,7 +41,9 @@ const updateProfile = async (req, res, next) => {
         }
 
         await User.update(updateData, { where: { id: userId } })
-        const updatedUserData = await User.findByPk(userId)
+        const updatedUserData = await User.findByPk(userId,{
+            attributes:{exclude: ["password"]}
+        })
         return responseHandler(res, 200, true, 'user update successfully!', [updatedUserData]);
     } catch (error) {
         if (error instanceof yup.ValidationError) {

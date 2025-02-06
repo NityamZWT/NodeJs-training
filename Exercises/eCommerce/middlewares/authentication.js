@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const responseHandler = require('../utilities/responseHandler');
+const responseHandler = require('../utilities/customHandler');
 
 
 const privatekey = process.env.JWT_PRIVATE_KEY;

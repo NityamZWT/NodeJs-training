@@ -1,5 +1,5 @@
 const { Category } = require('../models');
-const {responseHandler, handleYupError, handleDatabaseError} = require('../utilities/responseHandler')
+const {responseHandler, handleYupError, handleDatabaseError} = require('../utilities/customHandler')
 const {categorySchema} = require('../validators/categoryValidator')
 const yup = require('yup');
 

@@ -1,4 +1,13 @@
-const responseHandler = require('./responseHandler')
+
+//common response handler
+const responseHandler = (res, statusCode, success, message, data = undefined, error = undefined) => {
+    return res.status(statusCode).json({
+        success,
+        message,
+        data,
+        error
+    });
+};
 
 //handling yup error manually
 const handleYupError = (error, res) => {
@@ -25,7 +34,5 @@ const handleDatabaseError = (error, res) => {
     return responseHandler(res, 400, false, responseMessage);
 };
 
-module.exports={
-    handleYupError,
-    handleDatabaseError
-}
+
+module.exports = {responseHandler, handleYupError, handleDatabaseError};

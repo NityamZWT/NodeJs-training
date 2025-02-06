@@ -1,4 +1,4 @@
-const responseHandler = require('../utilities/responseHandler');
+const responseHandler = require('../utilities/customHandler');
 
 //global error handler
 const globalErrorHandler = (err, req, res, next) => {

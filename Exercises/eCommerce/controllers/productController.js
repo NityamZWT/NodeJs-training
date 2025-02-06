@@ -1,5 +1,5 @@
 const { Product, Category } = require('../models');
-const { responseHandler, handleYupError } = require('../utilities/responseHandler')
+const { responseHandler, handleYupError } = require('../utilities/customHandler')
 const { productCreateSchema, productUpdateSchema, productQuerySchema } = require('../validators/productValidator')
 const yup = require('yup');
 const fs = require('fs')

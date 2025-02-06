@@ -1,6 +1,6 @@
 const { where } = require('sequelize');
 const { Cart, Product, Order, Order_item } = require('../models');
-const { responseHandler, handleYupError } = require('../utilities/responseHandler');
+const { responseHandler, handleYupError } = require('../utilities/customHandler');
 const { orderStatusSchema } = require('../validators/orderValidator')
 const yup = require('yup');
 

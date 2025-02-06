@@ -30,7 +30,7 @@ const registrationSchema = yup.object({
       .max(50, 'Password cannot exceed 50 characters')
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character and min 8 character long'
       )
       .required('Password is required'),
       

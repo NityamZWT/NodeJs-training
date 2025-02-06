@@ -1,6 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
-const {responseHandler, handleYupError} = require('../utilities/responseHandler')
+const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { generateToken } = require('../utilities/jwtTokenGenerator');
 const {registrationSchema, loginSchema} = require('../validators/authValidator')
 const yup = require('yup');
@@ -15,7 +15,7 @@ try {
     //if create method fails
     if(newRegisteredUser===null)return responseHandler(res, 400, true,"registration failed!");
 
-    return responseHandler(res, 201, true, "registration Successfull!", [newRegisteredUser]);
+    return responseHandler(res, 201, true, "user registed Successfully!");
 } catch (error) {
     //handling unique contraint error of database
     if (error.name === 'SequelizeUniqueConstraintError') {
@@ -38,7 +38,7 @@ const login = async(req, res, next)=>{
         
         const {email, password} = req.body;
         //check if user already exist or not
-        const userLogin = await User.findOne({ where: { email: email } })
+        const userLogin = await User.findOne({ where: { email: email }, attributes:{exclude: ["password"]}})
 
         if (userLogin === null) { 
             return responseHandler(res, 401, false, 'user not found!') 
