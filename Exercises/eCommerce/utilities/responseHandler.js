@@ -9,4 +9,4 @@ const responseHandler = (res, statusCode, success, message, data = undefined, er
     });
 };
 
-module.exports = responseHandler;
+module.exports = {responseHandler};
