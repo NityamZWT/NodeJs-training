@@ -36,7 +36,7 @@ const getwishlist = async(req, res, next)=>{
         const user_id = parseInt(req.user.id);
         console.log("user_id",user_id);
         
-        const wishlistData = await whishlist.findAll({
+        const wishlistData = await Whishlist.findAll({
             where: {
                 user_id: user_id
             },
@@ -58,7 +58,7 @@ const deletewishlist = async(req, res, next)=>{
         const user_id = parseInt(req.user.id);
         const wishlist_id = parseInt(req.params.id)
         
-        const resp = await whishlist.destroy({where:{
+        const resp = await Whishlist.destroy({where:{
             user_id,
             id: wishlist_id
         }})
