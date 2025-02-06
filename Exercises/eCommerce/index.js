@@ -15,13 +15,14 @@ const whishlistRoutes = require('./routers/whishlistRoutes')
 const orderRoutes = require('./routers/orderRoutes')
 
 
-
+//setup hostname and port
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 
 app.use(express.urlencoded({extended:false}))
 app.use(express.json());
 
+//assign route to route handler
 app.use('/api/auth',authRoutes);
 app.use('/api/users',userRoutes);
 app.use('/api/categories', categoryRoutes)
@@ -30,12 +31,12 @@ app.use('/api/cart',cartRoutes)
 app.use('/api/whishlist',whishlistRoutes)
 app.use('/api/orders',orderRoutes)
 
-
-
+// default route if no route matches
 app.all('*', (req, res)=>{
     return responseHandler(res, 404, false, "No such route is available");
 })
 
+// handle database connection
 async function dbConnection() {
     try {
       await sequelize.authenticate();
@@ -51,8 +52,10 @@ async function dbConnection() {
 
 dbConnection();
 
+//global error handler middlewarw
 app.use(globalErrorHandler)
 
+// app listenting
 app.listen(port, hostname, () => {
     console.log(`Server is running at http://${hostname}:${port}/`);
 });
