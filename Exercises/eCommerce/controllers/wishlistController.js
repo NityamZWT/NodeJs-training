@@ -1,4 +1,4 @@
-const { Product, whishlist } = require('../models');
+const { Product, Whishlist } = require('../models');
 const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { wishlistCreateSchema } = require('../validators/wishlistValidator')
 const yup = require('yup');
@@ -17,7 +17,7 @@ const createwishlist = async(req, res, next)=>{
         if (productheck === null) return responseHandler(res, 400, false, "product not exists!");
 
         const wishlistBody = { user_id, product_id }
-        const newWishlistData = await whishlist.create(wishlistBody);
+        const newWishlistData = await Whishlist.create(wishlistBody);
 
         if (newWishlistData === null) return responseHandler(res, 400, false, "wishlist not created!")
 
