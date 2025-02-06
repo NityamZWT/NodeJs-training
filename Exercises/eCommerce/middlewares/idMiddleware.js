@@ -5,7 +5,7 @@ const { handleYupError} = require('../utilities/customHandler')
 //id in params error handler
 const idMiddleware = async (req, res, next) => {
     try {
-        await orderStatusSchema.validate(req.params, { abortEarly: false });
+        await idSchema.validate(req.params, { abortEarly: false });
         next()
     } catch (error) {
         if (error instanceof yup.ValidationError) {
