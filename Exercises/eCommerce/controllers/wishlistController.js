@@ -3,6 +3,7 @@ const {responseHandler, handleYupError} = require('../utilities/responseHandler'
 const { wishlistCreateSchema } = require('../validators/wishlistValidator')
 const yup = require('yup');
 
+//handling creation of wishlist 
 const createwishlist = async(req, res, next)=>{
     try {
         await wishlistCreateSchema.validate(req.body, { abortEarly: false });
@@ -11,6 +12,7 @@ const createwishlist = async(req, res, next)=>{
         console.log(user_id);
         const { product_id } = req.body;
 
+        //check product exist or not
         const productheck = await Product.findByPk(product_id);
         if (productheck === null) return responseHandler(res, 400, false, "product not exists!");
 
@@ -28,6 +30,7 @@ const createwishlist = async(req, res, next)=>{
     }
 }
 
+//handling getting of wishlist 
 const getwishlist = async(req, res, next)=>{
     try {
         const user_id = parseInt(req.user.id);
@@ -49,6 +52,7 @@ const getwishlist = async(req, res, next)=>{
     }
 }
 
+//handling deletion of wishlist 
 const deletewishlist = async(req, res, next)=>{
     try {
         const user_id = parseInt(req.user.id);

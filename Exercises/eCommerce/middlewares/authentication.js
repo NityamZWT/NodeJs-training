@@ -5,6 +5,7 @@ const responseHandler = require('../utilities/responseHandler');
 
 const privatekey = process.env.JWT_PRIVATE_KEY;
 
+//role based authentication and jwrt token verification
 const authentication = (...Role)=>{
     return (req, res, next)=>{
         try {
@@ -13,19 +14,17 @@ const authentication = (...Role)=>{
                 return responseHandler(res, 401, false, 'token not found! please login first')
             }
         const jwtToken = token.split(' ')[1];
+        //verify token exist or not 
         jwt.verify(jwtToken, privatekey,(err, decoded)=>{
                     if(err){
                         responseHandler(res, 401, false, "User is not Authorized!")
                     }
+                    //check if role has permission or not
                     if(!Role.includes(decoded.role)) {
                         return responseHandler(res, 401, false, `you can't have access as ${decoded.role}` );
                     }
-                    console.log("decoded--",decoded);
-                    
+
                     req.user = decoded;
-
-                    console.log("req.user--",req.user);
-
                     next()
                 })
         } catch (error) {

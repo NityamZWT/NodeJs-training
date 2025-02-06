@@ -1,5 +1,6 @@
 const responseHandler = require('../utilities/responseHandler');
 
+//global error handler
 const globalErrorHandler = (err, req, res, next) => {
     console.error("Error: ", err);
 

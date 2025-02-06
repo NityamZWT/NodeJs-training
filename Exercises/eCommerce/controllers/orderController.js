@@ -4,7 +4,7 @@ const { responseHandler, handleYupError } = require('../utilities/responseHandle
 const { orderStatusSchema } = require('../validators/orderValidator')
 const yup = require('yup');
 
-
+//handling order creation
 const createOrder = async (req, res, next) => {
     try {
         console.log(req.user);
@@ -23,6 +23,7 @@ const createOrder = async (req, res, next) => {
 
         if (!cartData.length) return responseHandler(res, 400, false, "Cart not found!");
 
+        //handling total amount calculation
         const TotalAmount = (cartData) => {
             let total_price = 0;
             cartData.forEach((data) => {
@@ -30,13 +31,13 @@ const createOrder = async (req, res, next) => {
             });
             return total_price;
         };
-
+        // check if stock is less than quantity
         for (const data of cartData) {
             if (data.product.stock < data.quantity) {
                 return responseHandler(res, 200, true, `Desire quantity of ${data.product.name} is not available`)
             }
         }
-
+        //create order
         const orderData = await Order.create({
             user_id,
             total_price: parseFloat(TotalAmount(cartData))
@@ -55,7 +56,7 @@ const createOrder = async (req, res, next) => {
                 price: data.product.price
             });
         }
-
+        // bulk create order item
         const orderItemData = await Order_item.bulkCreate(newOrderItem);
         if (!orderItemData) return responseHandler(res, 500, false, "Order items are not created!");
 
@@ -65,7 +66,7 @@ const createOrder = async (req, res, next) => {
                 { where: { id: data.product_id } }
             );
         }
-
+        //delete cart once order is placed
         await Cart.destroy({ where: { user_id } });
 
         return responseHandler(res, 201, true, "Order and order items are created!", [orderData]);
@@ -75,6 +76,7 @@ const createOrder = async (req, res, next) => {
     }
 };
 
+//handling getting of orders
 const getOrders = async (req, res, next) => {
     try {
         const user_id = parseInt(req.user.id)
@@ -101,6 +103,7 @@ const getOrders = async (req, res, next) => {
     }
 }
 
+//handling getting of specific order
 const getOrderById = async (req, res, next) => {
     try {
         const order_id = parseInt(req.params.id);
@@ -130,6 +133,7 @@ const getOrderById = async (req, res, next) => {
     }
 }
 
+//handling updating of order status only by admin
 const updateOrderStatus = async (req, res, next) => {
     try {
         await orderStatusSchema.validate(req.body, { abortEarly: false });

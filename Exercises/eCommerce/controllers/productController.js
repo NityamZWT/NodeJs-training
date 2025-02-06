@@ -6,16 +6,17 @@ const fs = require('fs')
 const Path = require('path')
 const { Op } = require('sequelize')
 
+//handling creation of product 
 const createProduct = async (req, res, next) => {
     try {
         console.log(req.body);
 
         await productCreateSchema.validate(req.body, { abortEarly: false });
-
+        // image path
         const image_url = req.file ? req.file.path : null;
 
         const { name, description, price, stock, category_id } = req.body;
-
+        //check category exists or not
         const category_check = await Category.findByPk(category_id);
 
         if (category_check === null) return responseHandler(res, 400, false, 'category not exists!')
@@ -43,17 +44,21 @@ const createProduct = async (req, res, next) => {
     }
 }
 
+//handling getting of product 
 const getProduct = async (req, res, next) => {
     try {
         await productQuerySchema.validate(req.body, { abortEarly: false });
-
+        //query for filter
         const { orderby, ordertype, maxprice, minprice, categoryname, productname } = req.query;
+        //order in sequelize
         const orderList = orderby ? [[orderby, ordertype]] : undefined;
+        //filter goes to where clause
         const productFilter = {
             ...(maxprice && { price: { [Op.lte]: parseFloat(maxprice) } }),
             ...(minprice && { price: { [Op.gte]: parseFloat(minprice) } }),
             ...(productname && { name: productname })
         }
+        // category name filter
         const categoryFilter = {
             ...(categoryname && { name: categoryname })
         }
@@ -81,7 +86,7 @@ const getProduct = async (req, res, next) => {
     }
 }
 
-
+//handling getting of specific product 
 const getProductById = async (req, res, next) => {
     try {
         const Id = parseInt(req.params.id)
@@ -104,6 +109,7 @@ const getProductById = async (req, res, next) => {
     }
 }
 
+//handling updation of product 
 const updateProduct = async (req, res, next) => {
     try {
         await productUpdateSchema.validate(req.body, { abortEarly: false });
@@ -114,12 +120,13 @@ const updateProduct = async (req, res, next) => {
         if (productCheck === null) {
             return responseHandler(res, 400, false, "product not found!")
         } else {
+            //check if user pass image
             if (req.file) {
                 console.log('file--', req.file);
 
                 const filePath = productCheck.image_url;
                 const URL = Path.join(process.cwd(), 'public', Path.basename(filePath))
-
+                //deletion of previous file from local storage
                 fs.unlink(URL, (err) => {
                     console.log('inside unlink');
 
@@ -136,7 +143,7 @@ const updateProduct = async (req, res, next) => {
 
 
         const { name, description, price, stock, category_id } = req.body
-
+        //new update body
         const updateData = {
             ...(name && { name }),
             ...(description && { description }),
@@ -146,7 +153,7 @@ const updateProduct = async (req, res, next) => {
             ...(image_url && { image_url })
         }
         console.log("updatedData==", updateData);
-
+        //check if body doesn't contain anything
         if (Object.keys(updateData).length === 0) {
             console.log('updateData--', updateData);
             return responseHandler(res, 400, false, 'please provide fileds that you want to update!')
@@ -165,6 +172,7 @@ const updateProduct = async (req, res, next) => {
     }
 }
 
+//handling deletion of product 
 const deleteProduct = async (req, res, next) => {
     try {
         const Id = parseInt(req.params.id);

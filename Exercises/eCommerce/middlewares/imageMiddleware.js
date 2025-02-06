@@ -2,7 +2,7 @@ const multer = require('multer')
 const path = require('node:path')
 const fs = require('node:fs')
 
-
+// handling oimage upload by using multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log('__dirname:', process.cwd());
@@ -24,11 +24,12 @@ const storage = multer.diskStorage({
 })
 
 function checkFileType(file, cb) {
-
+// type check or size check of file
   const filetypes = /jpg|png/;
   const extname = filetypes.test(path.extname(String(file.originalname)).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
   const fileSizes = 2 * 1000 * 1000;
+
   if (file.size > fileSizes) {
     cb(new Error('file should not exceed 2MB in size'), false);
   }

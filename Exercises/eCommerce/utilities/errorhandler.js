@@ -1,5 +1,6 @@
 const responseHandler = require('./responseHandler')
 
+//handling yup error manually
 const handleYupError = (error, res) => {
 
     const formattedErrors = error.inner.map(err => ({
@@ -11,7 +12,7 @@ const handleYupError = (error, res) => {
     return responseHandler(res, 400, false, responseMessage);
 };
 
-
+//handling database error manually(unikque contraint erro)
 const handleDatabaseError = (error, res) => {
 
     const formattedErrors = error.errors.map(err => ({

@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const privatekey = process.env.JWT_PRIVATE_KEY;
 
+//generating jwt token
 const generateToken = (id, role)=>{
     const token = jwt.sign({id, role}, privatekey, { expiresIn:'1h' })
     console.log('token--',token);

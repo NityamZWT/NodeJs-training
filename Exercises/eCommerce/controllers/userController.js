@@ -4,7 +4,7 @@ const { profileUpdateSchema } = require('../validators/profileValidator')
 const {userQuerySchema} = require('../validators/userValidator')
 const yup = require('yup');
 
-
+//handling getting of profile 
 const getProfile = async (req, res, next) => {
     try {
         const userId = parseInt(req.user.id);
@@ -22,6 +22,7 @@ const getProfile = async (req, res, next) => {
     }
 }
 
+//handling updation of profile 
 const updateProfile = async (req, res, next) => {
     try {
         await profileUpdateSchema.validate(req.body, { abortEarly: false });
@@ -34,7 +35,7 @@ const updateProfile = async (req, res, next) => {
             ...(last_name && { last_name }),
             ...(email && { email }),
         }
-
+        //check if body doesn't contain anything
         if (Object.keys(updateData).length === 0) {
             return responseHandler(res, 400, false, 'please provide fileds that you want to update!')
         }
@@ -50,6 +51,7 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
+//handling getting of all profile by admin
 const getAllProfile = async (req, res, next) => {
     try {
         await userQuerySchema.validate(req.body, { abortEarly: false });

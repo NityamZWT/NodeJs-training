@@ -1,3 +1,5 @@
+
+//common response handler
 const responseHandler = (res, statusCode, success, message, data = undefined, error = undefined) => {
     return res.status(statusCode).json({
         success,
