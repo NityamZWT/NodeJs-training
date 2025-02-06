@@ -11,7 +11,7 @@ const userRoutes = require('./routers/userRoutes')
 const categoryRoutes = require('./routers/categoryRoutes')
 const productRoutes = require('./routers/productRoutes')
 const cartRoutes = require('./routers/cartRoutes')
-const whishlistRoutes = require('./routers/whishlistRoutes')
+const whishlistRoutes = require('./routers/wishlistRoutes')
 const orderRoutes = require('./routers/orderRoutes')
 
 
@@ -28,7 +28,7 @@ app.use('/api/users',userRoutes);
 app.use('/api/categories', categoryRoutes)
 app.use('/api/products',productRoutes)
 app.use('/api/cart',cartRoutes)
-app.use('/api/whishlist',whishlistRoutes)
+app.use('/api/wishlist',whishlistRoutes)
 app.use('/api/orders',orderRoutes)
 
 // default route if no route matches
@@ -42,7 +42,7 @@ async function dbConnection() {
       await sequelize.authenticate();
       console.log("connect to database");
 
-      await sequelize.sync({alter: true});
+      await sequelize.sync({force: true});
       console.log('Database synced successfully.');
       
     } catch (error) {
