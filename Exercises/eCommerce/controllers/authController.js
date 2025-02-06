@@ -38,11 +38,13 @@ const login = async(req, res, next)=>{
         
         const {email, password} = req.body;
         //check if user already exist or not
-        const userLogin = await User.findOne({ where: { email: email }, attributes:{exclude: ["password"]}})
+        const userLogin = await User.findOne({ where: { email: email }})
 
         if (userLogin === null) { 
             return responseHandler(res, 401, false, 'user not found!') 
         }
+        console.log(password,"---------", userLogin.password);
+        
         //handling password verification
          const verify = bcrypt.compareSync(password, userLogin.password);
          if (verify) {
@@ -50,7 +52,7 @@ const login = async(req, res, next)=>{
 
             const Token = generateToken(userLogin.id, userLogin.role);
 
-            return responseHandler(res, 200, true, `${userLogin.first_name} is successfully login as ${userLogin.role}`,{userLogin, Token});
+            return responseHandler(res, 200, true, `${userLogin.first_name} is successfully login as ${userLogin.role}`, Token);
         }
         else {
             responseHandler(res, 401, false, "password is Incorrect! Please provide correct password to login.")

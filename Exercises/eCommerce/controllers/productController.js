@@ -1,6 +1,6 @@
 const { Product, Category } = require('../models');
 const { responseHandler, handleYupError } = require('../utilities/customHandler')
-const { productCreateSchema, productUpdateSchema, productQuerySchema } = require('../validators/productValidator')
+const { productCreateSchema, productUpdateSchema } = require('../validators/productValidator')
 const yup = require('yup');
 const fs = require('fs')
 const Path = require('path')
@@ -47,7 +47,6 @@ const createProduct = async (req, res, next) => {
 //handling getting of product 
 const getProduct = async (req, res, next) => {
     try {
-        await productQuerySchema.validate(req.body, { abortEarly: false });
         //query for filter
         const { orderby, ordertype, maxprice, minprice, categoryname, productname } = req.query;
         //order in sequelize
