@@ -27,7 +27,11 @@ module.exports = (sequelize) => {
     }
 
     Product.init({
-        name: { type: DataTypes.STRING(255), allowNull: false },
+        name: { type: DataTypes.STRING(255), allowNull: false,
+            set(value) {
+                this.setDataValue('name', value.toLowerCase()); 
+            }
+        },
         description: { type: DataTypes.TEXT, allowNull: true },
         price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
         stock: { type: DataTypes.INTEGER, defaultValue: 0 },

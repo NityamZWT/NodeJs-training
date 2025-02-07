@@ -1,6 +1,7 @@
 const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { User } = require('../models');
 const { profileUpdateSchema } = require('../validators/profileValidator')
+const {userQuerySchema} = require('../validators/userValidator')
 const yup = require('yup');
 
 //handling getting of profile 
@@ -55,6 +56,8 @@ const updateProfile = async (req, res, next) => {
 //handling getting of all profile by admin
 const getAllProfile = async (req, res, next) => {
     try {
+        await userQuerySchema.validate(req.query, { abortEarly: false });
+
         const { role, orderby, ordertype } = req.query;
         const filter = role ? { role } : {};
         const orderList = orderby?[[orderby, ordertype]]:undefined

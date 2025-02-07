@@ -6,7 +6,8 @@ const productCreateSchema = yup.object({
         .string()
         .trim()
         .max(255, "Product name must not exceed 255 characters")
-        .required("Product name is required!"),
+        .required("Product name is required!")
+        .transform(value => (value ? value.toLowerCase() : value)),
 
     description: yup
         .string()
@@ -35,7 +36,8 @@ const productUpdateSchema = yup.object({
     name: yup
     .string()
     .trim()
-    .max(255, "Product name must not exceed 255 characters"),
+    .max(255, "Product name must not exceed 255 characters")
+    .transform(value => (value ? value.toLowerCase() : value)),
 
 description: yup
     .string()
@@ -63,8 +65,8 @@ const productQuerySchema = yup.object({
   ordertype: yup.string().oneOf(['ASC', 'DESC']).optional(),
   maxprice: yup.number().positive().optional(),
   minprice: yup.number().positive().optional(),
-  categoryname: yup.string().trim().optional(),
-  productname: yup.string().trim().optional(),
+  categoryname: yup.string().trim().optional().transform(value => (value ? value.toLowerCase() : value)),
+  productname: yup.string().trim().optional().transform(value => (value ? value.toLowerCase() : value)),
 });
 
 

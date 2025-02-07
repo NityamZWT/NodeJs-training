@@ -14,7 +14,11 @@ module.exports = (sequelize) => {
      }
 
     Category.init({
-        name: { type: DataTypes.STRING(100), allowNull: false },
+        name: { type: DataTypes.STRING(100), allowNull: false,
+          set(value) {
+            this.setDataValue('name', value.toLowerCase()); 
+        }
+         },
     },
     {
         sequelize, 

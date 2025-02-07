@@ -10,7 +10,11 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-       name: { type: Sequelize.STRING(100), allowNull: false },
+       name: { type: Sequelize.STRING(100), allowNull: false,
+        set(value) {
+          this.setDataValue('name', value.toLowerCase()); 
+      }
+       },
        createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
