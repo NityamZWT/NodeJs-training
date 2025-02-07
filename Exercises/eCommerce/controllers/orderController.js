@@ -146,7 +146,11 @@ const updateOrderStatus = async (req, res, next) => {
                 }
             }
         )
-        if (updateStatus === null) return responseHandler(res, 400, false, 'order not found!');
+        console.log("orderstatus--",updateStatus);
+        
+        if (!updateStatus || updateStatus[0] === 0) {
+            return responseHandler(res, 400, false, 'Order not found!');
+        }
         const updatedOrder = await Order.findOne({
             where: {
                 id: order_id

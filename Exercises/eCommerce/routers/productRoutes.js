@@ -14,7 +14,7 @@ router.get('/', productControllers.getProduct);
 //get specific product
 router.get('/:id',idMiddleware, productControllers.getProductById);
 //update product
-router.put('/:id',idMiddleware, authentication('admin'),fileUploadFilter,productControllers.updateProduct);
+router.patch('/:id',idMiddleware, authentication('admin'),fileUploadFilter,productControllers.updateProduct);
 //delete product
 router.delete('/:id',idMiddleware, authentication('admin'),productControllers.deleteProduct)
 
