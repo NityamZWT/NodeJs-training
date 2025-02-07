@@ -2,11 +2,12 @@ const yup = require('yup');
 
 const registrationSchema = yup.object({
     first_name: yup
-    .string("First name must be string")
+    .string()
     .trim()
     .min(2, 'First name must be at least 2 characters long')
     .max(50, 'First name cannot exceed 50 characters')
     .matches(/^[a-zA-Z]+$/, "Name must only contain alphabets")
+    .typeError("must be string")
     .required('First name is required'),
 
     last_name: yup
@@ -15,6 +16,7 @@ const registrationSchema = yup.object({
     .min(2, 'Last name must be at least 2 characters long')
     .max(50, 'Last name cannot exceed 50 characters')
     .matches(/^[a-zA-Z]+$/, "Name must only contain alphabets")
+    .typeError("must be string")
     .required('Last name is required'),
 
     email: yup
@@ -30,7 +32,7 @@ const registrationSchema = yup.object({
       .max(50, 'Password cannot exceed 50 characters')
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character and min 8 character long'
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and min 8 character long'
       )
       .required('Password is required'),
       

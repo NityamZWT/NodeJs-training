@@ -15,6 +15,7 @@ const cartCreateSchema = yup.object({
 
     quantity: yup
         .number()
+        .typeError("Quantity must be number(Integer)")
         .min(1, "Quantity must be at least 1")
         .default(1) // Default to 1 if no quantity is provided
         .required("Quantity is required")

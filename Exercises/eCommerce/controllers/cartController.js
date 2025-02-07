@@ -16,17 +16,17 @@ const createCart = async (req, res, next) => {
         if (productCheck === null) return responseHandler(res, 400, false, "product not exists!");
 
         //check that stock is 0 or not
-        if (productCheck.stock === 0) return responseHandler(res, 200, false, "product is unavailable!");
+        if (productCheck.stock === 0) return responseHandler(res, 400, false, "product is unavailable!");
 
         //check that quantity is not greater than stock
-        if (productCheck.stock <= quantity) return responseHandler(res, 200, false, "dmanded quantity of product is more than current stock!");
+        if (productCheck.stock <= quantity) return responseHandler(res, 400, false, "dmanded quantity of product is more than current stock!");
 
         const cartBody = { user_id, product_id, quantity }
         const newCartData = await Cart.create(cartBody);
 
         if (newCartData === null) return responseHandler(res, 400, false, "cart not created!")
 
-        return responseHandler(res, 200, true, 'cart created successfully', [newCartData])
+        return responseHandler(res, 201, true, 'cart created successfully', [newCartData])
     } catch (error) {
         if (error instanceof yup.ValidationError) {
             return handleYupError(error, res);
@@ -40,7 +40,6 @@ const getcart = async (req, res, next) => {
     try {
         //user id getting from jwt token after authentication
         const user_id = parseInt(req.user.id);
-        console.log("user_id", user_id);
         //get cart data of user
         const cartData = await Cart.findAll({
             where: {
@@ -52,7 +51,7 @@ const getcart = async (req, res, next) => {
                 as: "product"
             }
         })
-        if(cartData === null)return responseHandler(res, 400, false, 'cart not found!')
+        if(cartData === null)return responseHandler(res, 404, false, 'cart not found!')
         return responseHandler(res, 200, true, 'cart fetched successfully', cartData)
     } catch (error) {
         next(error)
@@ -62,17 +61,14 @@ const getcart = async (req, res, next) => {
 //handling deletion of cart 
 const deleteCart = async (req, res, next) => {
     try {
-        const user_id = parseInt(req.user.id);
         const cart_id = parseInt(req.params.id)
-        console.log("id---", cart_id);
 
         const resp = await Cart.destroy({
             where: {
-                user_id,
                 id: cart_id
             }
         })
-        if (resp === 0) return responseHandler(res, 400, false, "cart not exists!");
+        if (resp === 0) return responseHandler(res, 404, false, "cart not exists!");
         return responseHandler(res, 200, true, 'cart deleted successfully')
     } catch (error) {
         next(error)

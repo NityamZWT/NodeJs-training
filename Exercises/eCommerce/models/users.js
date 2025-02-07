@@ -65,6 +65,12 @@ module.exports = (sequelize) => {
               name: "unique_email_index",
             },
           ],
+        defaultScope:{
+          attributes:{exclude:["password", "createdAt", "updatedAt"]},
+        },
+        scope:{
+          createAtAndUpdateAt:{ attributes: { include: ['createdAt','updatedAt'] } },
+        },
     })
     return User;
 }

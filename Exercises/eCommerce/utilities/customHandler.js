@@ -21,7 +21,7 @@ const handleYupError = (error, res) => {
     return responseHandler(res, 400, false, responseMessage);
 };
 
-//handling database error manually(unikque contraint erro)
+//handling database error manually(unikque contraint error)
 const handleDatabaseError = (error, res) => {
 
     const formattedErrors = error.errors.map(err => ({
@@ -31,7 +31,7 @@ const handleDatabaseError = (error, res) => {
 
     const responseMessage = formattedErrors.map(i => i.message);
 
-    return responseHandler(res, 400, false, responseMessage);
+    return responseHandler(res, 500, false, responseMessage);
 };
 
 

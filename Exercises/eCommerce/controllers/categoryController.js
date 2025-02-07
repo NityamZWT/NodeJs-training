@@ -9,7 +9,10 @@ const createCategory = async (req, res, next) => {
         await categorySchema.validate(req.body, { abortEarly: false });
 
         const categoryName = req.body.name;
-
+        //check category if exist or not in database
+        const categoryNameCheck = await Category.findOne({where:{name:categoryName}})
+        if(categoryNameCheck)return responseHandler(res, 400, false, "Category already exists!")
+            
         const newCategory = await Category.create({ name: categoryName });
 
         return responseHandler(res, 201, true, `category ${newCategory.name} is created with ${newCategory.id}`,[newCategory]);
@@ -31,8 +34,8 @@ const createCategory = async (req, res, next) => {
 const getCategory = async (req, res, next) => {
     try {
         const categoryData = await Category.findAll();
-        if (categoryData === null) {
-            return responseHandler(res, 400, false, 'categories are not found!')
+        if (categoryData.length === 0) {
+            return responseHandler(res, 404, false, 'categories are not found!')
         }
 
         return responseHandler(res, 200, true, 'All categories are fetched successfully', categoryData)

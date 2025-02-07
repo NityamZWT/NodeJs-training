@@ -63,8 +63,8 @@ image_url: yup
 const productQuerySchema = yup.object({
   orderby: yup.string().oneOf(['createdAt', 'updatedAt', 'price', 'stock']).optional(),
   ordertype: yup.string().oneOf(['ASC', 'DESC']).optional(),
-  maxprice: yup.number().positive().optional(),
-  minprice: yup.number().positive().optional(),
+  maxprice: yup.number().positive().optional().typeError("max price must be in positive number"),
+  minprice: yup.number().positive().optional().typeError("min price must be in positive number"),
   categoryname: yup.string().trim().optional().transform(value => (value ? value.toLowerCase() : value)),
   productname: yup.string().trim().optional().transform(value => (value ? value.toLowerCase() : value)),
 });

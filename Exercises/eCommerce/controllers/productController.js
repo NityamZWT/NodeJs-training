@@ -21,7 +21,7 @@ const createProduct = async (req, res, next) => {
         //check category exists or not
         const category_check = await Category.findByPk(category_id);
 
-        if (category_check === null) return responseHandler(res, 400, false, 'category not exists!')
+        if (category_check === null) return responseHandler(res, 404, false, 'category not exists!')
 
         const newProduct = {
             name,
@@ -34,7 +34,7 @@ const createProduct = async (req, res, next) => {
 
         const newProductData = await Product.create(newProduct);
         if (newProductData === null) {
-            if (newProductData === null) return responseHandler(res, 400, true, "Product creation failed!");
+            if (newProductData === null) return responseHandler(res, 500, true, "Product creation failed due to server error!");
         }
         return responseHandler(res, 201, true, "Product created Successfull!", [newProductData]);
 
@@ -76,7 +76,7 @@ const getProduct = async (req, res, next) => {
         })
 
         if (productData.length === 0) {
-            return responseHandler(res, 400, false, "product not found!")
+            return responseHandler(res, 404, false, "product not found!")
         }
 
         return responseHandler(res, 200, true, 'All products are fetched successfully', productData)
@@ -101,7 +101,7 @@ const getProductById = async (req, res, next) => {
             }
         });
         if (productData === null) {
-            return responseHandler(res, 400, false, "product not found!")
+            return responseHandler(res, 404, false, "product not found!")
         }
 
         return responseHandler(res, 200, true, `product with id: ${productData.id} are fetched successfully`, productData)
@@ -120,29 +120,23 @@ const updateProduct = async (req, res, next) => {
         console.log(Id);
         productCheck = await Product.findByPk(Id);
         if (productCheck === null) {
-            return responseHandler(res, 400, false, "product not found!")
+            return responseHandler(res, 404, false, "product not found!")
         } else {
             //check if user pass image
             if (req.file) {
-                console.log('file--', req.file);
-
                 const filePath = productCheck.image_url;
                 const URL = Path.join(process.cwd(), 'public', Path.basename(filePath))
-                //deletion of previous file from local storage
+                
+                //deletion of previous file from local storage 
                 fs.unlink(URL, (err) => {
-                    console.log('inside unlink');
-
                     if (err) {
                         console.error('Error deleting file:', err);
-                    } else {
-                        console.log('File deleted successfully');
                     }
                 });
             }
         }
 
         const image_url = req.file ? req.file.path : null;
-
 
         const { name, description, price, stock, category_id } = req.body
         //new update body
@@ -181,7 +175,7 @@ const deleteProduct = async (req, res, next) => {
         const productCheck = await Product.findByPk(Id);
 
         if (productCheck === null) {
-            return responseHandler(res, 400, false, "product not found!")
+            return responseHandler(res, 404, false, "product not found!")
         } else {
             const filePath = productCheck.image_url;
             const URL = Path.join(process.cwd(), 'public', Path.basename(filePath))
@@ -189,11 +183,9 @@ const deleteProduct = async (req, res, next) => {
             fs.unlink(URL, (err) => {
                 if (err) {
                     console.error('Error deleting file:', err);
-                } else {
-                    console.log('File deleted successfully');
-                }
+                } 
             });
-            const resp = await Product.destroy({ where: { id: Id } })
+            await Product.destroy({ where: { id: Id } })
             return responseHandler(res, 200, true, 'product deleted successfully!');
         }
     } catch (error) {

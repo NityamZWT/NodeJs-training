@@ -14,12 +14,12 @@ const createwishlist = async(req, res, next)=>{
 
         //check product exist or not
         const productheck = await Product.findByPk(product_id);
-        if (productheck === null) return responseHandler(res, 400, false, "product not exists!");
+        if (productheck === null) return responseHandler(res, 500, false, "product not exists!");
 
         const wishlistBody = { user_id, product_id }
         const newWishlistData = await Whishlist.create(wishlistBody);
 
-        if (newWishlistData === null) return responseHandler(res, 400, false, "wishlist not created!")
+        if (newWishlistData === null) return responseHandler(res, 500, false, "wishlist not created due to server error!")
 
         return responseHandler(res, 200, true, 'cart created successfully', [newWishlistData])
     } catch (error) {
@@ -59,10 +59,9 @@ const deletewishlist = async(req, res, next)=>{
         const wishlist_id = parseInt(req.params.id)
         
         const resp = await Whishlist.destroy({where:{
-            user_id,
             id: wishlist_id
         }})
-        if(resp===0)return responseHandler(res, 400, false, "wishlist not exists!");
+        if(resp===0)return responseHandler(res, 500, false, "wishlist not deleted due to server error!");
 
         return responseHandler(res, 200, true, 'wishlist deleted successfully');
     } catch (error) {

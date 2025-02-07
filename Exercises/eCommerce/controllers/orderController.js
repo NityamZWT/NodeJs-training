@@ -34,7 +34,7 @@ const createOrder = async (req, res, next) => {
         // check if stock is less than quantity
         for (const data of cartData) {
             if (data.product.stock < data.quantity) {
-                return responseHandler(res, 200, true, `Desire quantity of ${data.product.name} is not available`)
+                return responseHandler(res, 400, true, `Desire quantity of ${data.product.name} is not available`)
             }
         }
         //create order
@@ -43,7 +43,7 @@ const createOrder = async (req, res, next) => {
             total_price: parseFloat(TotalAmount(cartData))
         });
 
-        if (!orderData) return responseHandler(res, 500, false, "Order is not created!");
+        if (!orderData) return responseHandler(res, 500, false, "Order is not created due to server error!");
 
         const order_id = orderData.id;
 
@@ -58,7 +58,7 @@ const createOrder = async (req, res, next) => {
         }
         // bulk create order item
         const orderItemData = await Order_item.bulkCreate(newOrderItem);
-        if (!orderItemData) return responseHandler(res, 500, false, "Order items are not created!");
+        if (!orderItemData) return responseHandler(res, 500, false, "Order items are not created due to server error!");
 
         for (const data of cartData) {
             await Product.update(
@@ -95,7 +95,7 @@ const getOrders = async (req, res, next) => {
                 }
             }
         })
-        if (!orderHistory.length) return responseHandler(res, 400, false, "orders not found!");
+        if (!orderHistory.length) return responseHandler(res, 404, false, "orders not found!");
 
         return responseHandler(res, 200, true, 'All Orders are fetched successfully', orderHistory)
     } catch (error) {
@@ -125,7 +125,7 @@ const getOrderById = async (req, res, next) => {
                 }
             }
         })
-        if (orderData === null) return responseHandler(res, 400, false, "orders not found!");
+        if (orderData === null) return responseHandler(res, 404, false, "orders not found!");
 
         return responseHandler(res, 200, true, ' Orders details fetched successfully', orderData)
     } catch (error) {
@@ -149,7 +149,7 @@ const updateOrderStatus = async (req, res, next) => {
         console.log("orderstatus--",updateStatus);
         
         if (!updateStatus || updateStatus[0] === 0) {
-            return responseHandler(res, 400, false, 'Order not found!');
+            return responseHandler(res, 404, false, 'Order not found!');
         }
         const updatedOrder = await Order.findOne({
             where: {

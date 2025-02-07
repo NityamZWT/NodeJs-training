@@ -10,11 +10,9 @@ const getProfile = async (req, res, next) => {
         const userId = parseInt(req.user.id);
         console.log("typeof--", typeof userId);
 
-        const resp = await User.findByPk(userId,{
-            attributes:{exclude: ["password"]}
-        });
+        const resp = await User.findByPk(userId);
         if (resp === null) {
-            return responseHandler(res, 400, false, "user not found!")
+            return responseHandler(res, 404, false, "user not found!")
         }
         return responseHandler(res, 200, true, `Profile of ${resp.first_name} is fetched successfully`, [resp])
     } catch (error) {
@@ -37,13 +35,11 @@ const updateProfile = async (req, res, next) => {
         }
         //check if body doesn't contain anything
         if (Object.keys(updateData).length === 0) {
-            return responseHandler(res, 400, false, 'please provide fileds that you want to update!')
+            return responseHandler(res, 400, false, 'please provide fields that you want to update!')
         }
 
         await User.update(updateData, { where: { id: userId } })
-        const updatedUserData = await User.findByPk(userId,{
-            attributes:{exclude: ["password"]}
-        })
+        const updatedUserData = await User.findByPk(userId)
         return responseHandler(res, 200, true, 'user update successfully!', [updatedUserData]);
     } catch (error) {
         if (error instanceof yup.ValidationError) {
@@ -62,13 +58,12 @@ const getAllProfile = async (req, res, next) => {
         const filter = role ? { role } : {};
         const orderList = orderby?[[orderby, ordertype]]:undefined
 
-        const userData = await User.findAll({
+        const userData = await User.scope('createAtAndUpdateAt').findAll({
             where: filter,
-            order: orderList,
-            attributes:{exclude: ["password"]}
+            order: orderList
         });
         if (userData.length === 0) {
-            return responseHandler(res, 400, false, "can't get all users!");
+            return responseHandler(res, 404, false, " Users not found!");
         }
         return responseHandler(res, 200, true, 'All users fetched successfully!', userData);
     } catch (error) {

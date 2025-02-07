@@ -1,6 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
-const {responseHandler, handleYupError} = require('../utilities/customHandler')
+const {responseHandler, handleYupError, handleDatabaseError} = require('../utilities/customHandler')
 const { generateToken } = require('../utilities/jwtTokenGenerator');
 const {registrationSchema, loginSchema} = require('../validators/authValidator')
 const yup = require('yup');
@@ -9,18 +9,21 @@ const yup = require('yup');
 const registration = async(req, res, next)=>{
 try {
     await registrationSchema.validate(req.body, { abortEarly: false });
+    const {email} = req.body;
+    const emailCheck = await User.findOne({where:{email}});
 
-    const newRegisteredUser = await User.create(req.body);
-
+    //check if email alrady exist or not in database
+    if(emailCheck)return responseHandler(res, 400, false, "User with this email already exists!")
+        
     //if create method fails
-    if(newRegisteredUser===null)return responseHandler(res, 400, true,"registration failed!");
+    const newRegisteredUser = await User.create(req.body);
+    if(newRegisteredUser===null)return responseHandler(res, 500, true,"registration failed due to server error! Please try again.");
 
     return responseHandler(res, 201, true, "user registed Successfully!");
 } catch (error) {
-    //handling unique contraint error of database
-    if (error.name === 'SequelizeUniqueConstraintError') {
-        const field = error.errors[0].path; 
-        return responseHandler(res, 400, false, `${field.charAt(0).toUpperCase() + field.slice(1)} already exists.`)
+      //handle unique contraint error of database 
+      if (error instanceof UniqueConstraintError) {
+        return handleDatabaseError(error, res);
     }
 
     //handling yup error manually
@@ -41,9 +44,8 @@ const login = async(req, res, next)=>{
         const userLogin = await User.findOne({ where: { email: email }})
 
         if (userLogin === null) { 
-            return responseHandler(res, 401, false, 'user not found!') 
+            return responseHandler(res, 404, false, 'user not found!') 
         }
-        console.log(password,"---------", userLogin.password);
         
         //handling password verification
          const verify = bcrypt.compareSync(password, userLogin.password);
