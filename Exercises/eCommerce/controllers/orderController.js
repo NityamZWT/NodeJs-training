@@ -177,9 +177,6 @@ const getAllOrders = async(req, res, next)=>{
         console.log('inside');
         
         const orderHistory = await Order.findAll({
-            where:{
-                status:"pending"
-            },
             include: [{
                 model: Order_item,
                 require: false,

@@ -35,10 +35,14 @@ const createCategory = async (req, res, next) => {
 const getCategory = async (req, res, next) => {
     try {
         const {categoryname} = req.query;
+        const limitNumber = req.query.limit ? parseInt(req.query.limit) : 100;
+
+
         const categoryFilter = {
             ...(categoryname && { name: categoryname })
         }
         const categoryData = await Category.findAll({
+            limit:limitNumber,
             where: categoryFilter,
             include:{
                 model: Product,

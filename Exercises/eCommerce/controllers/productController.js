@@ -52,7 +52,8 @@ const getProduct = async (req, res, next) => {
     try {
         await productQuerySchema.validate(req.query, { abortEarly: false });
         //query for filter
-        const { orderby, ordertype, maxprice, minprice, categoryname, productname } = req.query;
+        const {  orderby, ordertype, maxprice, minprice, categoryname, productname } = req.query;
+        const limitNumber = req.query.limit ? parseInt(req.query.limit) : 100;
         //order in sequelize
         const orderList = orderby ? [[orderby, ordertype]] : undefined;
         //filter goes to where clause
@@ -66,6 +67,7 @@ const getProduct = async (req, res, next) => {
             ...(categoryname && { name: categoryname })
         }
         const productData = await Product.findAll({
+            limit:limitNumber,
             where: productFilter,
             order: orderList,
             include: {
