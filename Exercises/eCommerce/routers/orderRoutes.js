@@ -10,6 +10,8 @@ const idMiddleware = require('../middlewares/idMiddleware')
 router.post('/', authentication('customer'), orderControllers.createOrder);
 // get order
 router.get('/', authentication('customer'),orderControllers.getOrders);
+//all orders for admin to edit status
+router.get('/allorders', authentication('admin'), orderControllers.getAllOrders)
 //get specific order
 router.get('/:id',idMiddleware, authentication('customer'),orderControllers.getOrderById);
 //update order

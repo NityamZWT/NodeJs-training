@@ -12,6 +12,8 @@ router.post('/', authentication('customer'), cartControllers.createCart);
 router.get('/', authentication('customer'),cartControllers.getcart);
 //delete cart
 router.delete('/:id',idMiddleware, authentication('customer'),cartControllers.deleteCart);
+//increment and decrement update
+router.put('/:id', idMiddleware, authentication('customer'), cartControllers.updateCartQuantity)
 
 
 

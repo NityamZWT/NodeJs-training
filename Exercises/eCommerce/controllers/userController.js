@@ -1,7 +1,7 @@
 const {responseHandler, handleYupError} = require('../utilities/customHandler')
 const { User } = require('../models');
 const { profileUpdateSchema } = require('../validators/profileValidator')
-const {userQuerySchema} = require('../validators/userValidator')
+// const {userQuerySchema} = require('../validators/userValidator')
 const yup = require('yup');
 
 //handling getting of profile 
@@ -10,7 +10,7 @@ const getProfile = async (req, res, next) => {
         const userId = parseInt(req.user.id);
         console.log("typeof--", typeof userId);
 
-        const resp = await User.findByPk(userId);
+        const resp = await User.findByPk(userId,{attributes:{exclude:['password','createdAt','updatedAt','id']}});
         if (resp === null) {
             return responseHandler(res, 404, false, "user not found!")
         }
@@ -52,13 +52,14 @@ const updateProfile = async (req, res, next) => {
 //handling getting of all profile by admin
 const getAllProfile = async (req, res, next) => {
     try {
-        await userQuerySchema.validate(req.query, { abortEarly: false });
+        // await userQuerySchema.validate(req.query, { abortEarly: false });
 
         const { role, orderby, ordertype } = req.query;
         const filter = role ? { role } : {};
         const orderList = orderby?[[orderby, ordertype]]:undefined
-
-        const userData = await User.scope('createAtAndUpdateAt').findAll({
+        console.log('inside');
+        
+        const userData = await User.findAll({
             where: filter,
             order: orderList
         });

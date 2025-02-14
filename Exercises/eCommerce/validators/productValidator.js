@@ -28,7 +28,7 @@ const productCreateSchema = yup.object({
     image_url: yup
         .string()
         .nullable()
-        .url("Image URL must be a valid URL"),
+        // .url("Image URL must be a valid URL"),
 
 })
 
@@ -56,7 +56,6 @@ category_id: yup
 image_url: yup
     .string()
     .nullable()
-    .url("Image URL must be a valid URL"),
 
 })
 

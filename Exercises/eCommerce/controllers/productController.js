@@ -4,7 +4,8 @@ const { productCreateSchema, productUpdateSchema, productQuerySchema } = require
 const yup = require('yup');
 const fs = require('fs')
 const Path = require('path')
-const { Op } = require('sequelize')
+const { Op, where } = require('sequelize');
+const { log } = require('console');
 
 //handling creation of product 
 const createProduct = async (req, res, next) => {
@@ -13,7 +14,7 @@ const createProduct = async (req, res, next) => {
 
         await productCreateSchema.validate(req.body, { abortEarly: false });
         // image path
-        const image_url = req.file ? req.file.path : null;
+        const image_url = req.file ? req?.file?.path : null;
 
         const { name, description, price, stock, category_id } = req.body;
         console.log(req.body);
@@ -97,11 +98,24 @@ const getProductById = async (req, res, next) => {
             include: {
                 model: Category,
                 require: false,
-                as: "category"
-            }
+                as: "category",
+                include:{
+                    model:Product,
+                    require:false,
+                    as:"products"
+                },
+            },
         });
         if (productData === null) {
             return responseHandler(res, 404, false, "product not found!")
+        }
+ 
+        if (productData.category && productData.category.products) {
+            console.log(productData.category.products);
+            
+            productData.category.products = productData.category.products.filter(
+                (product) => product.id !== Id
+            );
         }
 
         return responseHandler(res, 200, true, `product with id: ${productData.id} are fetched successfully`, productData)
@@ -124,11 +138,17 @@ const updateProduct = async (req, res, next) => {
         } else {
             //check if user pass image
             if (req.file) {
+                console.log('sdhfguodfh=====',req.file);
+                
                 const filePath = productCheck.image_url;
+                console.log('file path---',productCheck);
+                
                 const URL = Path.join(process.cwd(), 'public', Path.basename(filePath))
                 
                 //deletion of previous file from local storage 
                 fs.unlink(URL, (err) => {
+                    console.log('delete---',URL);
+                    
                     if (err) {
                         console.error('Error deleting file:', err);
                     }
@@ -136,7 +156,7 @@ const updateProduct = async (req, res, next) => {
             }
         }
 
-        const image_url = req.file ? req.file.path : null;
+        const image_url = req.file ? req?.file?.path : null;
 
         const { name, description, price, stock, category_id } = req.body
         //new update body

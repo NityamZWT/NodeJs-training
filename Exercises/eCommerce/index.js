@@ -1,6 +1,9 @@
 const express = require('express');
 const { sequelize } = require('./models');
 require('dotenv').config();
+const cors = require('cors')
+const path = require('path')
+
 const app = express();
 
 const globalErrorHandler = require('./middlewares/globalErrorHandler')
@@ -19,8 +22,10 @@ const orderRoutes = require('./routers/orderRoutes')
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 
+app.use(cors())
 app.use(express.urlencoded({extended:false}))
 app.use(express.json());
+app.use("/images", express.static(process.cwd()));
 
 //assign route to route handler
 app.use('/api/auth',authRoutes);

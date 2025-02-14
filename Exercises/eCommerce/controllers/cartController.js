@@ -11,6 +11,9 @@ const createCart = async (req, res, next) => {
         console.log(user_id);
 
         const { product_id, quantity } = req.body
+
+        const cartCheck = await Cart.findOne({where:{product_id}})
+        if(cartCheck !== null)return responseHandler(res, 400, false, 'product already exist in card!',{type:'ALREADY EXISTS'})
         //check that product already exists or not
         const productCheck = await Product.findByPk(product_id);
         if (productCheck === null) return responseHandler(res, 400, false, "product not exists!");
@@ -52,7 +55,17 @@ const getcart = async (req, res, next) => {
             }
         })
         if(cartData === null)return responseHandler(res, 404, false, 'cart not found!')
-        return responseHandler(res, 200, true, 'cart fetched successfully', cartData)
+        const TotalAmount = (cartData)=>{
+            let Amount = 0;
+            cartData.map((data)=>{
+                Amount += (data.quantity * data.product.price)
+            })
+            
+            return Amount;
+        }
+        const TotalPrice = TotalAmount(cartData)
+        
+        return responseHandler(res, 200, true, 'cart fetched successfully', {cartData,TotalPrice })
     } catch (error) {
         next(error)
     }
@@ -75,8 +88,23 @@ const deleteCart = async (req, res, next) => {
     }
 }
 
+const updateCartQuantity = async(req, res, next)=>{
+    try {
+        const { id } = req.params;
+        const {quantity} = req.body;
+        const cartItem = await Cart.findByPk(id);
+        if (!cartItem) return responseHandler(res, 404, false, 'cart item not found!')
+        const updatedQuantity = await Cart.update({quantity},{where:{id}})
+        return responseHandler(res, 200, true, 'quantity updated successfully' )     
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = {
     createCart,
     getcart,
-    deleteCart
+    deleteCart,
+    updateCartQuantity
 }

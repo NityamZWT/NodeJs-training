@@ -1,4 +1,4 @@
-const { where } = require('sequelize');
+const { where, Op } = require('sequelize');
 const { Cart, Product, Order, Order_item } = require('../models');
 const { responseHandler, handleYupError } = require('../utilities/customHandler');
 const { orderStatusSchema } = require('../validators/orderValidator')
@@ -7,8 +7,6 @@ const yup = require('yup');
 //handling order creation
 const createOrder = async (req, res, next) => {
     try {
-        console.log(req.user);
-
         const user_id = parseInt(req.user.id);
         console.log("user_id", user_id);
 
@@ -174,9 +172,38 @@ const updateOrderStatus = async (req, res, next) => {
     }
 }
 
+const getAllOrders = async(req, res, next)=>{
+    try {
+        console.log('inside');
+        
+        const orderHistory = await Order.findAll({
+            where:{
+                status:"pending"
+            },
+            include: [{
+                model: Order_item,
+                require: false,
+                as: "oder_item",
+                include: {
+                    model: Product,
+                    require: false,
+                    as: "product"
+                }
+            }]
+        })
+        if (!orderHistory.length) return responseHandler(res, 404, false, "orders not found!");
+        console.log(orderHistory);
+        
+        return responseHandler(res, 200, true, 'All Orders are fetched successfully', orderHistory)
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = {
     createOrder,
     getOrders,
     getOrderById,
-    updateOrderStatus
+    updateOrderStatus,
+    getAllOrders
 }

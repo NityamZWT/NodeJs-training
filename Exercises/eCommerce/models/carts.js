@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
             this.belongsTo(models.Product, {
                 foreignKey: "product_id",
                 as: "product", 
+                onDelete:"CASCADE"
             });
         }
      }

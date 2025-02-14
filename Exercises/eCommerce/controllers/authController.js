@@ -52,9 +52,9 @@ const login = async(req, res, next)=>{
          if (verify) {
             console.log('verify--', verify);
 
-            const Token = generateToken(userLogin.id, userLogin.role);
+            const Token = generateToken(userLogin.id, userLogin.role, userLogin.first_name);
 
-            return responseHandler(res, 200, true, `${userLogin.first_name} is successfully login as ${userLogin.role}`, Token);
+            return responseHandler(res, 200, true, `${userLogin.first_name} is successfully login as ${userLogin.role}`, {userLogin,Token});
         }
         else {
             responseHandler(res, 401, false, "password is Incorrect! Please provide correct password to login.")

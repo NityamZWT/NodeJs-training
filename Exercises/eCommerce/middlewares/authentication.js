@@ -10,6 +10,8 @@ const authentication = (...Role)=>{
     return (req, res, next)=>{
         try {
             const token = req.headers.authorization;
+            console.log('token--',token);
+            
             if(!token){
                 return responseHandler(res, 401, false, 'token not found! please login first')
             }
@@ -25,6 +27,7 @@ const authentication = (...Role)=>{
                     }
 
                     req.user = decoded;
+                    console.log('userROle---',req.user.role)
                     next()
                 })
         } catch (error) {

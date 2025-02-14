@@ -1,4 +1,5 @@
-const { Category } = require('../models');
+const { Model } = require('sequelize');
+const { Category, Product } = require('../models');
 const {responseHandler, handleYupError, handleDatabaseError} = require('../utilities/customHandler')
 const {categorySchema} = require('../validators/categoryValidator')
 const yup = require('yup');
@@ -33,7 +34,18 @@ const createCategory = async (req, res, next) => {
 //handling access or getting of category
 const getCategory = async (req, res, next) => {
     try {
-        const categoryData = await Category.findAll();
+        const {categoryname} = req.query;
+        const categoryFilter = {
+            ...(categoryname && { name: categoryname })
+        }
+        const categoryData = await Category.findAll({
+            where: categoryFilter,
+            include:{
+                model: Product,
+                required: false,
+                as:'products'
+            }
+        });
         if (categoryData.length === 0) {
             return responseHandler(res, 404, false, 'categories are not found!')
         }
